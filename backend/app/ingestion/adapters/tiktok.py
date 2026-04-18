@@ -99,3 +99,57 @@ async def extract_subtitle_file(url: str, output_dir: Path) -> Path | None:
         + list(output_dir.glob("*.json3"))
     )
     return candidates[0] if candidates else None
+
+
+async def extract_thumbnail_file(url: str, output_dir: Path) -> Path | None:
+    if not is_supported_tiktok_url(url):
+        raise ValueError("unsupported_tiktok_url")
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_template = output_dir / "thumbnail.%(ext)s"
+    process = await asyncio.create_subprocess_exec(
+        "yt-dlp",
+        "--no-playlist",
+        "--skip-download",
+        "--write-thumbnail",
+        "-o",
+        str(output_template),
+        url,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    await asyncio.wait_for(process.communicate(), timeout=60)
+
+    if process.returncode != 0:
+        return None
+
+    candidates = sorted(path for path in output_dir.glob("thumbnail.*") if path.is_file())
+    return candidates[0] if candidates else None
+
+
+async def download_video_file(url: str, output_dir: Path, max_video_mb: int) -> Path | None:
+    if not is_supported_tiktok_url(url):
+        raise ValueError("unsupported_tiktok_url")
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_template = output_dir / "video.%(ext)s"
+    process = await asyncio.create_subprocess_exec(
+        "yt-dlp",
+        "--no-playlist",
+        "--max-filesize",
+        f"{max_video_mb}M",
+        "-f",
+        "mp4/best[ext=mp4]/best",
+        "-o",
+        str(output_template),
+        url,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    await asyncio.wait_for(process.communicate(), timeout=300)
+
+    if process.returncode != 0:
+        return None
+
+    candidates = sorted(path for path in output_dir.glob("video.*") if path.is_file())
+    return candidates[0] if candidates else None

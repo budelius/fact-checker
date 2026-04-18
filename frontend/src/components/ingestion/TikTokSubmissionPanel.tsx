@@ -22,9 +22,16 @@ export function TikTokSubmissionPanel({
       </div>
 
       <form className="submission-form" onSubmit={onSubmitUrl}>
-        <label>
+        <label htmlFor="tiktok-url">
           <span>Public TikTok URL</span>
-          <input value={url} onChange={(event) => onUrlChange(event.target.value)} type="url" />
+          <input
+            id="tiktok-url"
+            name="tiktok-url"
+            value={url}
+            onChange={(event) => onUrlChange(event.target.value)}
+            placeholder="https://www.tiktok.com/@creator/video/..."
+            type="url"
+          />
         </label>
 
         <div className="submission-actions">

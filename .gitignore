@@ -214,3 +214,7 @@ frontend/.yarn/
 .DS_Store
 
 .idea/
+
+
+vault/raw/screenshots/*.jpg
+vault/raw/screenshots/*.image

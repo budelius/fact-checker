@@ -114,6 +114,7 @@ class ScreenshotArtifact(BaseModel):
     video_uuid: UUID
     timestamp_seconds: float | None = None
     vault_path: str
+    asset_url: str | None = None
     source_clue: bool = False
     source_clue_text: str | None = None
     claim_uuids: list[UUID] = Field(default_factory=list)

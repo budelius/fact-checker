@@ -1,18 +1,28 @@
 from tempfile import TemporaryDirectory
 from pathlib import Path
+import shutil
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
+from app.contracts.vault import VAULT_RAW_ARTIFACT_FOLDERS, expected_raw_artifact_path
 from app.ingestion.adapters.tiktok import (
+    download_video_file,
     extract_subtitle_file,
+    extract_thumbnail_file,
     fetch_public_metadata,
     is_supported_tiktok_url,
 )
 from app.ingestion.claims import extract_fixture_claims
+from app.ingestion.compliance import decide_media_download
 from app.ingestion.jobs import create_ingestion_job, get_job, mark_job_succeeded, save_job, serialize_job
-from app.ingestion.keyframes import build_screenshot_artifact
+from app.ingestion.keyframes import (
+    build_screenshot_artifact,
+    extract_frame_with_ffmpeg,
+    score_source_clue_text,
+)
 from app.ingestion.research_basis import triage_research_basis
 from app.ingestion.transcript import build_transcript_artifact
 from app.ingestion.uploads import store_uploaded_video
@@ -72,15 +82,91 @@ def _candidate_summary(candidate_count: int) -> str:
     return "Claims extracted; no paper or source references found in transcript or screenshots."
 
 
-def _build_screenshot_clues(job: IngestionJob, transcript: TranscriptArtifact):
+def _asset_url_for_vault_path(vault_path: str) -> str | None:
+    prefix = "vault/raw/"
+    if not vault_path.startswith(prefix):
+        return None
+
+    remainder = vault_path[len(prefix) :]
+    if "/" not in remainder:
+        return None
+
+    kind, filename = remainder.split("/", 1)
+    if kind not in VAULT_RAW_ARTIFACT_FOLDERS or "/" in filename or "\\" in filename:
+        return None
+
+    return f"/ingestion/artifacts/raw/{kind}/{filename}"
+
+
+def _image_suffix(source_file: Path) -> str:
+    with source_file.open("rb") as handle:
+        header = handle.read(16)
+
+    if header.startswith(b"\xff\xd8\xff"):
+        return ".jpg"
+    if header.startswith(b"\x89PNG\r\n\x1a\n"):
+        return ".png"
+    if header.startswith(b"RIFF") and header[8:12] == b"WEBP":
+        return ".webp"
+
+    suffix = source_file.suffix.lower()
+    if suffix in {".jpg", ".jpeg", ".png", ".webp"}:
+        return suffix
+    return ".jpg"
+
+
+def _store_screenshot_asset(source_file: Path, slug: str) -> tuple[str, str] | None:
+    if not source_file.exists():
+        return None
+
+    suffix = _image_suffix(source_file)
+    settings = get_settings()
+    destination_dir = Path(settings.vault_root) / "raw" / "screenshots"
+    destination_dir.mkdir(parents=True, exist_ok=True)
+    destination = destination_dir / f"{slug}{suffix}"
+    shutil.copyfile(source_file, destination)
+    vault_path = expected_raw_artifact_path("screenshots", slug, suffix)
+    asset_url = _asset_url_for_vault_path(vault_path)
+    return (vault_path, asset_url) if asset_url else None
+
+
+def _source_clue_context(transcript: TranscriptArtifact) -> tuple[float | None, str | None]:
+    for segment in transcript.segments:
+        if score_source_clue_text(segment.text):
+            return segment.start_seconds, segment.text
+
+    if score_source_clue_text(transcript.plain_text):
+        return (
+            transcript.segments[0].start_seconds if transcript.segments else None,
+            transcript.plain_text[:240],
+        )
+
+    return (
+        transcript.segments[0].start_seconds if transcript.segments else None,
+        None,
+    )
+
+
+def _build_screenshot_clues(
+    job: IngestionJob,
+    transcript: TranscriptArtifact,
+    preview_file: Path | None = None,
+):
     screenshots = []
-    if "arxiv" in transcript.plain_text.lower() or "doi" in transcript.plain_text.lower():
+    timestamp_seconds, source_clue_text = _source_clue_context(transcript)
+    has_source_clue = source_clue_text is not None and score_source_clue_text(source_clue_text)
+    if has_source_clue or preview_file is not None:
+        slug = f"{job.job_uuid}-source-clue"
+        stored_asset = _store_screenshot_asset(preview_file, slug) if preview_file else None
+        vault_path, asset_url = stored_asset if stored_asset else (None, None)
         screenshots.append(
             build_screenshot_artifact(
                 source_video_uuid=transcript.video_uuid,
-                timestamp_seconds=transcript.segments[0].start_seconds if transcript.segments else None,
-                slug=f"{job.job_uuid}-source-clue",
-                source_clue_text=transcript.plain_text[:240],
+                timestamp_seconds=timestamp_seconds,
+                slug=slug,
+                source_clue_text=source_clue_text,
+                vault_path=vault_path,
+                asset_url=asset_url,
             )
         )
     return screenshots
@@ -91,6 +177,7 @@ def _complete_transcript_job(
     transcript: TranscriptArtifact,
     public_metadata: dict | None = None,
     media_artifact_details: dict | None = None,
+    preview_file: Path | None = None,
 ) -> dict:
     job.video_uuid = transcript.video_uuid
 
@@ -109,7 +196,7 @@ def _complete_transcript_job(
         transcript.transcript_uuid,
     )
 
-    screenshots = _build_screenshot_clues(job, transcript)
+    screenshots = _build_screenshot_clues(job, transcript, preview_file)
     update_stage(
         job,
         IngestionStageName.capture_source_clues,
@@ -256,7 +343,8 @@ async def submit_tiktok_url(request: TikTokSubmitRequest) -> dict:
     update_stage(job, IngestionStageName.build_transcript, StageStatus.running, "Reading captions.")
     transcript = None
     with TemporaryDirectory(prefix="fact-checker-subs-") as output_dir:
-        subtitle_file = await extract_subtitle_file(request.url, Path(output_dir))
+        output_path = Path(output_dir)
+        subtitle_file = await extract_subtitle_file(request.url, output_path)
         if subtitle_file is not None:
             transcript = build_transcript_artifact(
                 source_video_uuid=job.video_uuid or uuid4(),
@@ -266,8 +354,40 @@ async def submit_tiktok_url(request: TikTokSubmitRequest) -> dict:
                 provider="yt-dlp",
             )
 
-    if transcript is not None:
-        return _complete_transcript_job(job, transcript, public_metadata=metadata)
+        preview_file = None
+        if transcript is not None:
+            timestamp_seconds, _source_clue_text = _source_clue_context(transcript)
+            settings = get_settings()
+            media_decision = decide_media_download(
+                enabled=settings.tiktok_media_download_enabled,
+                max_video_mb=settings.tiktok_max_video_mb,
+            )
+            if media_decision.allowed:
+                video_file = await download_video_file(
+                    request.url,
+                    output_path,
+                    settings.tiktok_max_video_mb,
+                )
+                if video_file is not None:
+                    preview_file = await extract_frame_with_ffmpeg(
+                        video_file,
+                        output_path,
+                        "source-clue-frame",
+                        timestamp_seconds,
+                    )
+
+        try:
+            thumbnail_file = await extract_thumbnail_file(request.url, output_path)
+        except Exception:
+            thumbnail_file = None
+
+        if transcript is not None:
+            return _complete_transcript_job(
+                job,
+                transcript,
+                public_metadata=metadata,
+                preview_file=preview_file or thumbnail_file,
+            )
 
     update_stage(
         job,
@@ -411,3 +531,15 @@ def get_ingestion_job(job_uuid: UUID) -> dict:
     if job is None:
         raise HTTPException(status_code=404, detail="ingestion_job_not_found")
     return job
+
+
+@router.get("/artifacts/raw/{kind}/{filename}")
+def get_raw_artifact(kind: str, filename: str):
+    if kind not in VAULT_RAW_ARTIFACT_FOLDERS or "/" in filename or "\\" in filename:
+        raise HTTPException(status_code=404, detail="raw_artifact_not_found")
+
+    artifact_path = Path(get_settings().vault_root) / "raw" / kind / filename
+    if not artifact_path.is_file():
+        raise HTTPException(status_code=404, detail="raw_artifact_not_found")
+
+    return FileResponse(artifact_path)

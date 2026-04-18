@@ -1,3 +1,4 @@
+import asyncio
 import builtins
 import re
 from pathlib import Path
@@ -24,14 +25,51 @@ def build_screenshot_artifact(
     slug: str,
     source_clue_text: str | None,
     vault_path: str | None = None,
+    asset_url: str | None = None,
 ) -> ScreenshotArtifact:
     return ScreenshotArtifact(
         video_uuid=source_video_uuid,
         timestamp_seconds=timestamp_seconds,
         vault_path=vault_path or expected_raw_artifact_path("screenshots", slug, "png"),
+        asset_url=asset_url,
         source_clue=score_source_clue_text(source_clue_text or ""),
         source_clue_text=source_clue_text,
     )
+
+
+async def extract_frame_with_ffmpeg(
+    video_path: Path,
+    output_dir: Path,
+    slug: str,
+    timestamp_seconds: float | None = None,
+) -> Path | None:
+    if not video_path.exists():
+        return None
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / f"{slug}.jpg"
+    timestamp = max(timestamp_seconds or 0.0, 0.0)
+    process = await asyncio.create_subprocess_exec(
+        "ffmpeg",
+        "-y",
+        "-ss",
+        f"{timestamp:.3f}",
+        "-i",
+        str(video_path),
+        "-frames:v",
+        "1",
+        "-q:v",
+        "2",
+        str(output_path),
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    await asyncio.wait_for(process.communicate(), timeout=30)
+
+    if process.returncode != 0 or not output_path.is_file():
+        return None
+
+    return output_path
 
 
 def extract_keyframes_from_video(

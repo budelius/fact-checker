@@ -76,3 +76,53 @@ def test_extract_subtitle_failure_returns_none(monkeypatch, tmp_path):
     )
 
     assert result is None
+
+
+def test_extract_thumbnail_file_writes_public_thumbnail(monkeypatch, tmp_path):
+    async def fake_create_subprocess_exec(*args, **_kwargs):
+        assert "--write-thumbnail" in args
+        output_path = args[args.index("-o") + 1].replace("%(ext)s", "webp")
+        from pathlib import Path
+
+        Path(output_path).write_bytes(b"thumbnail")
+        return FakeProcess(returncode=0)
+
+    monkeypatch.setattr(tiktok.asyncio, "create_subprocess_exec", fake_create_subprocess_exec)
+
+    import asyncio
+
+    result = asyncio.run(
+        tiktok.extract_thumbnail_file(
+            "https://www.tiktok.com/@ai_creator/video/1234567890",
+            tmp_path,
+        )
+    )
+
+    assert result is not None
+    assert result.name == "thumbnail.webp"
+
+
+def test_download_video_file_uses_size_limit_and_returns_download(monkeypatch, tmp_path):
+    async def fake_create_subprocess_exec(*args, **_kwargs):
+        assert "--max-filesize" in args
+        assert "125M" in args
+        output_path = args[args.index("-o") + 1].replace("%(ext)s", "mp4")
+        from pathlib import Path
+
+        Path(output_path).write_bytes(b"video")
+        return FakeProcess(returncode=0)
+
+    monkeypatch.setattr(tiktok.asyncio, "create_subprocess_exec", fake_create_subprocess_exec)
+
+    import asyncio
+
+    result = asyncio.run(
+        tiktok.download_video_file(
+            "https://www.tiktok.com/@ai_creator/video/1234567890",
+            tmp_path,
+            max_video_mb=125,
+        )
+    )
+
+    assert result is not None
+    assert result.name == "video.mp4"

@@ -1,8 +1,11 @@
 import builtins
+import asyncio
 from uuid import uuid4
 
+from app.ingestion import keyframes
 from app.ingestion.keyframes import (
     build_screenshot_artifact,
+    extract_frame_with_ffmpeg,
     extract_keyframes_from_video,
     score_source_clue_text,
 )
@@ -40,3 +43,39 @@ def test_extract_keyframes_missing_cv2_returns_empty_list(monkeypatch, tmp_path)
     monkeypatch.setattr(builtins, "__import__", fake_import)
 
     assert extract_keyframes_from_video(tmp_path / "fixture.mp4", uuid4()) == []
+
+
+def test_extract_frame_with_ffmpeg_writes_timestamped_jpeg(monkeypatch, tmp_path):
+    video_file = tmp_path / "video.mp4"
+    video_file.write_bytes(b"video")
+
+    class FakeProcess:
+        returncode = 0
+
+        async def communicate(self):
+            return b"", b""
+
+    async def fake_create_subprocess_exec(*args, **_kwargs):
+        assert args[0] == "ffmpeg"
+        assert "-ss" in args
+        assert args[args.index("-ss") + 1] == "12.500"
+        output_path = args[-1]
+        from pathlib import Path
+
+        Path(output_path).write_bytes(b"\xff\xd8\xffframe")
+        return FakeProcess()
+
+    monkeypatch.setattr(keyframes.asyncio, "create_subprocess_exec", fake_create_subprocess_exec)
+
+    frame = asyncio.run(
+        extract_frame_with_ffmpeg(
+            video_file,
+            tmp_path / "frames",
+            "source-clue",
+            timestamp_seconds=12.5,
+        )
+    )
+
+    assert frame is not None
+    assert frame.name == "source-clue.jpg"
+    assert frame.read_bytes() == b"\xff\xd8\xffframe"

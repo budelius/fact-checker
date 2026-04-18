@@ -58,6 +58,7 @@ export type ScreenshotArtifact = {
   video_uuid: string;
   timestamp_seconds?: number | null;
   vault_path: string;
+  asset_url?: string | null;
   source_clue: boolean;
   source_clue_text?: string | null;
   claim_uuids: string[];
@@ -165,4 +166,16 @@ export async function uploadVideoFile(file: File, transcript?: string): Promise<
 
 export async function fetchIngestionJob(jobUuid: string): Promise<IngestionJob> {
   return parseResponse(await fetch(`${API_BASE_URL}/ingestion/jobs/${jobUuid}`));
+}
+
+export function resolveApiAssetUrl(assetUrl?: string | null): string | null {
+  if (!assetUrl) {
+    return null;
+  }
+
+  if (/^https?:\/\//i.test(assetUrl) || assetUrl.startsWith("data:")) {
+    return assetUrl;
+  }
+
+  return `${API_BASE_URL}${assetUrl.startsWith("/") ? "" : "/"}${assetUrl}`;
 }

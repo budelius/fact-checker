@@ -25,7 +25,10 @@ def _use_temp_vault(monkeypatch, tmp_path):
     get_settings.cache_clear()
 
 
-def test_submit_supported_tiktok_returns_job_uuid(monkeypatch):
+def test_submit_supported_tiktok_returns_job_uuid(monkeypatch, tmp_path):
+    _use_temp_vault(monkeypatch, tmp_path)
+    monkeypatch.setenv("TIKTOK_MEDIA_DOWNLOAD_ENABLED", "true")
+
     async def fake_fetch_public_metadata(_url):
         return {
             "id": "1234567890",
@@ -46,8 +49,27 @@ def test_submit_supported_tiktok_returns_job_uuid(monkeypatch):
         )
         return subtitle_file
 
+    async def fake_extract_thumbnail_file(_url, output_dir):
+        thumbnail_file = output_dir / "thumbnail.image"
+        thumbnail_file.write_bytes(b"\xff\xd8\xfffake-thumbnail")
+        return thumbnail_file
+
+    async def fake_download_video_file(_url, output_dir, _max_video_mb):
+        video_file = output_dir / "video.mp4"
+        video_file.write_bytes(b"fake-video")
+        return video_file
+
+    async def fake_extract_frame_with_ffmpeg(_video_file, output_dir, _slug, timestamp_seconds):
+        assert timestamp_seconds == 1.0
+        frame_file = output_dir / "source-clue-frame.jpg"
+        frame_file.write_bytes(b"\xff\xd8\xfffake-ffmpeg-frame")
+        return frame_file
+
     monkeypatch.setattr("app.api.ingestion.fetch_public_metadata", fake_fetch_public_metadata)
     monkeypatch.setattr("app.api.ingestion.extract_subtitle_file", fake_extract_subtitle_file)
+    monkeypatch.setattr("app.api.ingestion.extract_thumbnail_file", fake_extract_thumbnail_file)
+    monkeypatch.setattr("app.api.ingestion.download_video_file", fake_download_video_file)
+    monkeypatch.setattr("app.api.ingestion.extract_frame_with_ffmpeg", fake_extract_frame_with_ffmpeg)
 
     response = client.post(
         "/ingestion/tiktok",
@@ -61,11 +83,20 @@ def test_submit_supported_tiktok_returns_job_uuid(monkeypatch):
     assert "ready for paper discovery" in payload["current_operation"]
     assert payload["public_metadata"]["external_video_id"] == "1234567890"
     assert payload["transcript_artifact"]["provenance"]["method"] == "subtitle_file"
+    assert payload["screenshots"][0]["asset_url"].startswith(
+        "/ingestion/artifacts/raw/screenshots/"
+    )
+    assert payload["screenshots"][0]["asset_url"].endswith(".jpg")
+    assert payload["screenshots"][0]["source_clue"] is True
     assert payload["claims"][0]["evidence_status"] == "pending"
     metadata_artifact = next(
         artifact for artifact in payload["artifacts"] if artifact["artifact_type"] == "public_metadata"
     )
     assert metadata_artifact["status"] == "succeeded"
+
+    asset_response = client.get(payload["screenshots"][0]["asset_url"])
+    assert asset_response.status_code == 200
+    assert asset_response.content == b"\xff\xd8\xfffake-ffmpeg-frame"
 
 
 def test_submit_unsupported_tiktok_url_returns_400():
