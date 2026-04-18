@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.ground_truth import router as ground_truth_router
 from app.api.ingestion import router as ingestion_router
+from app.api.knowledge import router as knowledge_router
 from app.api.reports import router as reports_router
 
 app = FastAPI(title="Fact Checker API")
@@ -18,6 +19,7 @@ app.add_middleware(
 app.include_router(ingestion_router)
 app.include_router(ground_truth_router)
 app.include_router(reports_router)
+app.include_router(knowledge_router)
 
 
 @app.get("/health")
