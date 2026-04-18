@@ -1,0 +1,26 @@
+{
+  "data": [
+    {
+      "paperId": "204e3073870fae3d05bcbc2f6a8e263d9b72e776",
+      "title": "Attention Is All You Need",
+      "url": "https://www.semanticscholar.org/paper/204e3073870fae3d05bcbc2f6a8e263d9b72e776",
+      "abstract": "The Transformer is based solely on attention mechanisms.",
+      "authors": [
+        {
+          "authorId": "1741101",
+          "name": "Ashish Vaswani"
+        }
+      ],
+      "externalIds": {
+        "ArXiv": "1706.03762",
+        "DOI": "10.48550/arXiv.1706.03762"
+      },
+      "publicationTypes": ["JournalArticle"],
+      "publicationDate": "2017-06-12",
+      "openAccessPdf": {
+        "url": "https://arxiv.org/pdf/1706.03762.pdf",
+        "status": "GREEN"
+      }
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "output": [
+    {
+      "type": "message",
+      "content": [
+        {
+          "type": "output_text",
+          "text": "The likely paper is Attention Is All You Need.",
+          "annotations": [
+            {
+              "type": "url_citation",
+              "url": "https://arxiv.org/abs/1706.03762",
+              "title": "Attention Is All You Need"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "web_search_call",
+      "action": {
+        "sources": [
+          {
+            "url": "https://arxiv.org/abs/1706.03762",
+            "title": "Attention Is All You Need"
+          },
+          {
+            "url": "https://example.com/attention-blog",
+            "title": "A blog explanation of attention"
+          }
+        ]
+      }
+    }
+  ]
+}

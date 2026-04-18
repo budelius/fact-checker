@@ -1,0 +1,34 @@
+{
+  "results": [
+    {
+      "id": "https://openalex.org/W2741809807",
+      "doi": "https://doi.org/10.48550/arxiv.1706.03762",
+      "title": "Attention Is All You Need",
+      "type": "preprint",
+      "publication_date": "2017-06-12",
+      "abstract_inverted_index": {
+        "We": [0],
+        "propose": [1],
+        "the": [2],
+        "Transformer": [3]
+      },
+      "authorships": [
+        {
+          "author": {
+            "id": "https://openalex.org/A5018736291",
+            "display_name": "Ashish Vaswani"
+          }
+        }
+      ],
+      "open_access": {
+        "is_oa": true,
+        "oa_url": "https://arxiv.org/pdf/1706.03762.pdf"
+      },
+      "primary_location": {
+        "landing_page_url": "https://arxiv.org/abs/1706.03762",
+        "pdf_url": "https://arxiv.org/pdf/1706.03762.pdf"
+      },
+      "is_retracted": false
+    }
+  ]
+}
