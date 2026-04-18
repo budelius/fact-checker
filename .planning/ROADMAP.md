@@ -92,7 +92,7 @@
 
 ### Phase 4: Evidence Evaluation and Fact-Check Reports
 
-**Status:** Planned (2026-04-18)
+**Status:** Complete (verified 2026-04-18)
 
 **Goal:** Compare each video claim against stored source evidence and produce cited, uncertainty-aware fact-check reports.
 
@@ -113,8 +113,12 @@
 - Reject uncited labels during report generation.
 - Do not aggregate claim labels into a single truth score.
 - Preserve all evaluation inputs so reports can be rerun as the knowledge base improves.
+- Paper summaries are navigation only; raw chunks, direct source text, and explicitly allowed news article text are the only verdict evidence.
+- Report reruns create new versions rather than overwriting earlier reports.
 
 ### Phase 5: Knowledge Browser, Search, Graph, and Ratings
+
+**Status:** Pending
 
 **Goal:** Make the accumulated Markdown/vector/graph knowledge useful for future checks through browsing, search, graph inspection, consistency checks, and transparent ratings.
 

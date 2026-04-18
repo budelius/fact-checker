@@ -39,11 +39,11 @@ Requirements for the first release. Each maps to roadmap phases.
 
 ### Evaluation
 
-- [ ] **EVAL-01**: System can compare each extracted video claim against selected source evidence.
-- [ ] **EVAL-02**: System can label each claim as supported, contradicted, mixed, or insufficient evidence.
-- [ ] **EVAL-03**: Every non-insufficient label cites stored evidence records and source links.
-- [ ] **EVAL-04**: System can explain uncertainty, source limits, and preprint status in the report.
-- [ ] **EVAL-05**: System can produce a complete Markdown fact-check report for each submitted video.
+- [x] **EVAL-01**: System can compare each extracted video claim against selected source evidence.
+- [x] **EVAL-02**: System can label each claim as supported, contradicted, mixed, or insufficient evidence.
+- [x] **EVAL-03**: Every non-insufficient label cites stored evidence records and source links.
+- [x] **EVAL-04**: System can explain uncertainty, source limits, and preprint status in the report.
+- [x] **EVAL-05**: System can produce a complete Markdown fact-check report for each submitted video.
 
 ### Knowledge Base
 
@@ -57,7 +57,7 @@ Requirements for the first release. Each maps to roadmap phases.
 ### User Interface
 
 - [x] **UI-01**: User can paste a TikTok URL into a web form and start a fact-checking job.
-- [ ] **UI-02**: User can view a report page with extracted claims, labels, evidence, citations, screenshots, and uncertainty notes.
+- [x] **UI-02**: User can view a report page with extracted claims, labels, evidence, citations, screenshots, and uncertainty notes.
 - [ ] **UI-03**: User can browse the Markdown knowledge base through an Obsidian-like web UI.
 - [ ] **UI-04**: User can search stored notes, papers, claims, and reports through a vector-backed search UI.
 - [ ] **UI-05**: User can inspect graph relationships between creators, claims, papers, authors, sources, and evidence.
@@ -138,11 +138,11 @@ Explicitly excluded. Documented to prevent scope creep.
 | PPR-03 | Phase 3 | Complete |
 | PPR-04 | Phase 3 | Complete |
 | PPR-05 | Phase 3 | Complete |
-| EVAL-01 | Phase 4 | Pending |
-| EVAL-02 | Phase 4 | Pending |
-| EVAL-03 | Phase 4 | Pending |
-| EVAL-04 | Phase 4 | Pending |
-| EVAL-05 | Phase 4 | Pending |
+| EVAL-01 | Phase 4 | Complete |
+| EVAL-02 | Phase 4 | Complete |
+| EVAL-03 | Phase 4 | Complete |
+| EVAL-04 | Phase 4 | Complete |
+| EVAL-05 | Phase 4 | Complete |
 | KB-01 | Phase 1 | Complete |
 | KB-02 | Phase 1 | Complete |
 | KB-03 | Phase 1 | Complete |
@@ -150,7 +150,7 @@ Explicitly excluded. Documented to prevent scope creep.
 | KB-05 | Phase 1 | Complete |
 | KB-06 | Phase 5 | Pending |
 | UI-01 | Phase 2 | Complete |
-| UI-02 | Phase 4 | Pending |
+| UI-02 | Phase 4 | Complete |
 | UI-03 | Phase 5 | Pending |
 | UI-04 | Phase 5 | Pending |
 | UI-05 | Phase 5 | Pending |
@@ -169,4 +169,4 @@ Explicitly excluded. Documented to prevent scope creep.
 
 ---
 *Requirements defined: 2026-04-18*
-*Last updated: 2026-04-18 after Phase 3 verification*
+*Last updated: 2026-04-18 after Phase 4 verification*

@@ -20,9 +20,9 @@ Before planning or implementing a phase, read the project context, requirements,
 
 ## Current Focus
 
-Phase 4: Evidence Evaluation and Fact-Check Reports is implemented and in final verification.
+Phase 5: Knowledge Browser, Search, Graph, and Ratings is next.
 
-Goal: compare each extracted video claim against selected Phase 3 paper evidence and produce cited, uncertainty-aware fact-check reports without unsupported labels.
+Goal: make accumulated Markdown/vector/graph knowledge useful through browsing, search, graph inspection, consistency checks, and transparent ratings.
 
 ## Important Constraints
 
@@ -88,7 +88,7 @@ Goal: compare each extracted video claim against selected Phase 3 paper evidence
 
 Run:
 
-`$gsd-plan-phase 5`
+`$gsd-discuss-phase 5`
 
 For a planning review before execution, run:
 
