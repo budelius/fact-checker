@@ -1,3 +1,5 @@
+from uuid import uuid5
+
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, PointStruct, VectorParams
 
@@ -19,8 +21,9 @@ class QdrantRepository:
         )
 
     def upsert_payload(self, payload: QdrantPayload, vector: list[float]) -> None:
+        point_id = str(uuid5(payload.uuid, payload.chunk_id))
         point = PointStruct(
-            id=str(payload.uuid),
+            id=point_id,
             vector=vector,
             payload=payload.model_dump(mode="json"),
         )

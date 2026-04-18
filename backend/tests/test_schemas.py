@@ -54,13 +54,19 @@ def test_qdrant_payload_contract():
         entity_type=EntityType.paper,
         vault_path="vault/wiki/papers/attention-is-all-you-need.md",
         chunk_id="abstract-0001",
+        source="arxiv:1706.03762",
+        source_date="2017-06-12",
         source_uuid=TARGET_UUID,
         relationship_uuid=RELATIONSHIP_UUID,
+        relationship_uuids=[RELATIONSHIP_UUID],
     )
 
     assert payload.uuid == ENTITY_UUID
     assert payload.entity_type is EntityType.paper
     assert payload.vault_path.endswith("attention-is-all-you-need.md")
+    assert payload.source == "arxiv:1706.03762"
+    assert payload.source_date.isoformat() == "2017-06-12"
+    assert payload.relationship_uuids == [RELATIONSHIP_UUID]
 
 
 def test_invalid_uuid_rejected():

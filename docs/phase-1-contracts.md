@@ -22,9 +22,15 @@ MongoDB is the Phase 1 structured relationship store. Dedicated graph database w
 
 ## Qdrant
 
-Qdrant stores derived vectors with payload trace keys. Required payload keys are `uuid`, `entity_type`, `vault_path`, and `chunk_id`.
+Qdrant stores derived vectors with payload trace keys. Required payload keys are `uuid`, `entity_type`, `vault_path`, `chunk_id`, `source`, `source_date`, and `relationship_uuids`.
 
-Vectors must be traceable back to Markdown notes and canonical UUIDs.
+Vectors must be traceable back to Markdown notes and canonical UUIDs. Qdrant point IDs are deterministic per entity chunk, not just per entity UUID, so multiple chunks for the same entity do not overwrite each other.
+
+## Operations Logging
+
+Pipeline log events use a shared contract before real ingestion exists. Required keys are `event_type`, `job_uuid`, `stage`, `status`, `message`, and `created_at`.
+
+Allowed event types are ingestion, search, parsing, evaluation, indexing, and graph_write. These categories cover failed ingestion, search, parsing, evaluation, indexing, and graph writes for OPS-03.
 
 ## Frontend Shell
 
