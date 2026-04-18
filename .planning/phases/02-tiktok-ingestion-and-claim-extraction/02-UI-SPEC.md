@@ -1,10 +1,11 @@
 ---
 phase: 2
 slug: tiktok-ingestion-and-claim-extraction
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-04-18
+reviewed_at: 2026-04-18
 ---
 
 # Phase 2 - UI Design Contract
@@ -68,7 +69,7 @@ Use exactly these four sizes for Phase 2 additions. Use only weights 400 and 600
 
 Rules:
 
-- Use 13px mono text only for UUIDs, timestamps, route-like values, provider names, and raw artifact identifiers.
+- Use the mono font family only at declared sizes: 12px for compact UUIDs, timestamps, provider names, and artifact identifiers; 15px for readable raw-value rows.
 - Keep letter spacing at 0 except existing uppercase micro-labels, which may keep browser-default spacing with no negative tracking.
 - Long URLs, UUIDs, transcript excerpts, and claim text must wrap with `overflow-wrap: anywhere`.
 - Phase 2 headings should describe the current object or state, such as "TikTok ingestion", "Job status", "Extracted claims", or "Research basis".
@@ -296,11 +297,11 @@ No component may fetch TikTok-specific raw behavior directly. UI components cons
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** approved 2026-04-18
