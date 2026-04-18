@@ -48,8 +48,11 @@ Required raw artifact folders:
 - `vault/raw/videos/`
 - `vault/raw/transcripts/`
 - `vault/raw/screenshots/`
+- `vault/raw/papers/`
 
 Transcript and screenshot wiki notes use singular frontmatter values `entity_type: transcript` and `entity_type: screenshot` while their folders remain plural.
+
+Paper PDFs in `vault/raw/papers/` are immutable raw evidence inputs created only from lawful public access. The system must link or record metadata-only status instead of bypassing paywalls, authentication, robots restrictions, or publisher access controls.
 
 ## Frontmatter
 

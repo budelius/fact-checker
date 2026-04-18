@@ -12,7 +12,7 @@ VAULT_WIKI_ENTITY_FOLDERS = (
     "topics",
 )
 
-VAULT_RAW_ARTIFACT_FOLDERS = ("videos", "transcripts", "screenshots")
+VAULT_RAW_ARTIFACT_FOLDERS = ("videos", "transcripts", "screenshots", "papers")
 
 REQUIRED_FRONTMATTER_KEYS = (
     "uuid",

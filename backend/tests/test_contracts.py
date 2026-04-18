@@ -30,7 +30,7 @@ def test_vault_folders_match_contract():
         "topics",
     )
 
-    assert VAULT_RAW_ARTIFACT_FOLDERS == ("videos", "transcripts", "screenshots")
+    assert VAULT_RAW_ARTIFACT_FOLDERS == ("videos", "transcripts", "screenshots", "papers")
 
 
 def test_required_frontmatter_includes_uuid():
@@ -60,6 +60,13 @@ def test_raw_artifact_path_for_screenshot():
     )
 
 
+def test_raw_artifact_path_for_paper_pdf():
+    assert (
+        expected_raw_artifact_path("papers", "attention-is-all-you-need", ".pdf")
+        == "vault/raw/papers/attention-is-all-you-need.pdf"
+    )
+
+
 def test_build_trace_keys():
     assert build_trace_keys(
         uuid="00000000-0000-4000-8000-000000000001",
@@ -83,6 +90,9 @@ def test_build_trace_keys():
 def test_pipeline_logging_contract():
     assert "indexing" in PIPELINE_EVENT_TYPES
     assert "graph_write" in PIPELINE_EVENT_TYPES
+    assert "source_discovery" in PIPELINE_EVENT_TYPES
+    assert "paper_processing" in PIPELINE_EVENT_TYPES
+    assert "summarization" in PIPELINE_EVENT_TYPES
     assert "event_type" in REQUIRED_PIPELINE_LOG_KEYS
     assert "job_uuid" in REQUIRED_PIPELINE_LOG_KEYS
 
@@ -98,6 +108,17 @@ def test_pipeline_logging_contract():
 
     assert event["event_type"] == "indexing"
     assert event["entity_uuid"] == "00000000-0000-4000-8000-000000000001"
+
+    source_discovery_event = build_pipeline_log_event(
+        event_type="source_discovery",
+        job_uuid="00000000-0000-4000-8000-000000000010",
+        stage="merge_candidates",
+        status="succeeded",
+        message="Merged paper candidates",
+        created_at="2026-04-18T00:00:00Z",
+    )
+
+    assert source_discovery_event["stage"] == "merge_candidates"
 
 
 def test_pipeline_logging_rejects_unknown_event_type():

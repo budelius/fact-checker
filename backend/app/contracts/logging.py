@@ -5,6 +5,9 @@ PIPELINE_EVENT_TYPES = (
     "evaluation",
     "indexing",
     "graph_write",
+    "source_discovery",
+    "paper_processing",
+    "summarization",
 )
 
 PIPELINE_EVENT_STATUSES = ("pending", "running", "succeeded", "failed", "skipped")
