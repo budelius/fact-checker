@@ -35,9 +35,8 @@ Processing Pipeline
       v
 Owned Knowledge Stores
   Markdown vault
-  Postgres metadata
+  MongoDB metadata and graph relationships
   Qdrant vector indexes
-  Neo4j graph database
   Object/file storage for media and PDFs
 ```
 
@@ -56,7 +55,7 @@ Owned Knowledge Stores
 | Evidence evaluator | Compare claims to source evidence and emit labels | LLM with citation-required structured output |
 | Markdown writer | Generate canonical notes and backlinks | File writer with deterministic templates |
 | Vector indexer | Embed and index source chunks and notes | Qdrant |
-| Graph writer | Create entities and relationships | Neo4j |
+| Graph writer | Create entities and relationships | MongoDB relationship collections |
 | Rating engine | Update transparent rating snapshots from evidence history | Deterministic rules plus audit trail |
 
 ## Recommended Project Structure
@@ -71,7 +70,7 @@ backend/
     sources/             # Paper search, source ranking, downloads
     papers/              # PDF parsing, chunking, paper summaries
     evaluation/          # Evidence labels and report generation
-    knowledge/           # Markdown, Qdrant, Neo4j writers
+    knowledge/           # Markdown, MongoDB, Qdrant writers
     ratings/             # Creator/source/paper/author scoring
     settings/            # Config, secrets, provider adapters
   tests/
@@ -109,15 +108,15 @@ infra/
 
 ### Pattern 1: Adapter Boundary for External Providers
 
-**What:** Wrap OpenAI, TikTok, paper indexes, Qdrant, and Neo4j behind narrow interfaces.
+**What:** Wrap OpenAI, TikTok, paper indexes, MongoDB, and Qdrant behind narrow interfaces.
 **When to use:** Always for third-party APIs and platform-specific ingestion.
 **Trade-offs:** Slightly more code up front, but prevents vendor lock-in and makes tests reliable.
 
 ### Pattern 2: Canonical Markdown plus Derived Indexes
 
-**What:** Treat Markdown notes and structured metadata as durable knowledge; Qdrant and Neo4j are indexes/views over that knowledge.
+**What:** Treat Markdown notes and MongoDB structured records as durable knowledge; Qdrant is an index/view over that knowledge.
 **When to use:** For notes, reports, paper summaries, and source records.
-**Trade-offs:** Requires consistency checks between Markdown, vector, graph, and relational stores.
+**Trade-offs:** Requires consistency checks between Markdown, MongoDB documents/relationships, and vector indexes.
 
 ### Pattern 3: Claim-Level Evaluation
 
@@ -146,7 +145,7 @@ Evidence evaluator labels each claim
     |
 Markdown writer creates notes and report
     |
-Qdrant and Neo4j indexes are updated
+MongoDB relationship records and Qdrant indexes are updated
     |
 UI displays report, notes, search, and graph relationships
 ```
@@ -163,7 +162,7 @@ UI displays report, notes, search, and graph relationships
 
 | Scale | Architecture Adjustments |
 |-------|--------------------------|
-| Prototype | Single backend worker, local Postgres/Qdrant/Neo4j, filesystem vault. |
+| Prototype | Single backend worker, local MongoDB/Qdrant, filesystem vault. |
 | Small team | Dedicated worker pool, object storage for media/PDFs, scheduled consistency checks. |
 | Company deployment | Tenant isolation, audit logs, queue partitioning, configurable provider adapters, backup/export workflow. |
 
@@ -205,7 +204,7 @@ UI displays report, notes, search, and graph relationships
 | Semantic Scholar | Paper-search adapter | Useful for citation, author, recommendation, and embedding metadata. |
 | arXiv | Paper-search adapter | Useful for AI preprints. |
 | Qdrant | Repository/index adapter | Store chunk vectors with payload filters for source, paper, claim, and note IDs. |
-| Neo4j | Graph repository | Store explicit relationships and support graph traversal. |
+| MongoDB | Metadata and graph repository | Store jobs, reports, entity documents, rating snapshots, and explicit relationship edges. |
 
 ### Internal Boundaries
 
@@ -220,7 +219,7 @@ UI displays report, notes, search, and graph relationships
 
 - https://platform.openai.com/docs/guides/tools-web-search - web search, citations, domain filtering, and live access.
 - https://qdrant.tech/documentation/search/ - vector search, filters, hybrid queries, text search.
-- https://neo4j.com/docs/ - graph database and graph-data-science tooling.
+- https://www.mongodb.com/docs/ - document database, aggregation, indexes, and relationship modeling.
 - https://developers.tiktok.com/doc/display-api-overview/ - official TikTok API boundaries for public video metadata.
 - https://docs.openalex.org/api-entities/works/search-works - paper search API.
 - https://www.semanticscholar.org/product/api - academic graph API.

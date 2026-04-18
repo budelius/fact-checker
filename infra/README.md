@@ -1,6 +1,7 @@
 # Local Infrastructure
 
 Phase 1 runs datastores only in Docker Compose. The backend and frontend run on the host during development.
+MongoDB is exposed only to the Compose network to avoid conflicting with a local host MongoDB.
 
 ## Start Datastores
 

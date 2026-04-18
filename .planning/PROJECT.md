@@ -4,11 +4,11 @@
 
 Fact Checker is a user-owned fact-checking system for AI research claims in public TikTok videos. A user pastes a video link into a website, the backend extracts the transcript and video context, finds relevant papers or preprints, and produces an evidence-backed report plus a growing Markdown knowledge base.
 
-The product is not just a one-off checker. It builds an owned research memory over time: Markdown notes, vector search, and MongoDB-backed graph relationships connect videos, creators, claims, papers, authors, sources, and evidence so future checks become faster and more accurate.
+The product is not just a one-off checker. The durable output is a **personal research brain** — a human-readable knowledge graph the user owns. Every check writes into it: Markdown notes, vector search, and MongoDB-backed graph relationships connect videos, creators, claims, papers, authors, sources, and evidence, so future checks become faster and more accurate. Because the graph is human-readable it is inspectable, and because it is connected it becomes a second signal for fact-checking — contradictions that span the brain catch what a single paper cannot. Like Notion, but self-owned, extensible, and it fact-checks itself.
 
 ## Core Value
 
-Save time verifying AI research claims while keeping the accumulated evidence and knowledge graph owned by the user or company.
+Own the knowledge, not just the verdict. Fact Checker saves time verifying AI research claims *and* accumulates the evidence and relationships into an owned, inspectable knowledge graph that the user or company keeps. Graph topology — not just claim-level labels — becomes a second measurement for truth as the brain grows.
 
 ## Requirements
 
@@ -59,12 +59,16 @@ Why this needs to exist:
 - The project should reduce vendor lock-in by keeping the durable knowledge in open Markdown plus independently controlled stores.
 - The project should create awareness of hallucinations by making sources, uncertainty, and citation trails visible.
 - The hybrid approach matters: LLMs are useful for extraction, search planning, summarization, and comparison, but the owned knowledge graph and source corpus provide the long-term accuracy layer.
+- The knowledge graph is itself an evidence mechanism. As the brain grows, cross-entity relationships (creator ↔ paper ↔ author ↔ claim) surface contradictions and corroborations that no single paper can reveal — this is the "second signal" that complements claim-level labels.
+- The brain must be human-readable and portable. Markdown plus explicit IDs/backlinks means users can audit, extend, and migrate it — the antithesis of a closed chat-vendor memory.
 
 Known terms:
 
 - "Ground truth" means links to research papers or preprints in v1.
 - "Truthness" should be represented as claim-level evidence labels, not as a single absolute truth score.
 - "Knowledge graph" means explicit relationships across creators, papers, authors, claims, sources, entities, topics, evidence, and reports.
+- "Personal brain" is the user's owned, Markdown-canonical knowledge graph that accumulates across checks. It is the primary durable artifact, not a side effect of reports.
+- "Second signal" means evaluating a claim against graph topology (related claims, shared authors, cross-video contradictions) in addition to direct paper-level evidence.
 
 ## Constraints
 
@@ -91,6 +95,8 @@ Known terms:
 | Markdown is the canonical knowledge surface | Markdown keeps the corpus portable, inspectable, and compatible with Obsidian-like workflows. | Validated in Phase 1 |
 | MongoDB replaces Postgres and Neo4j | One document database keeps operational records, entity metadata, rating snapshots, and graph relationships together for the MVP, reducing local infrastructure and schema coordination. | Validated in Phase 1 |
 | Qdrant is the vector database target | Qdrant fits filtered and hybrid retrieval for source chunks, claims, and notes. | Validated in Phase 1 |
+| The personal brain is the primary artifact | Framing the knowledge graph as the product (not as a side effect of reports) shapes storage, UI, and evaluation priorities — reports are views into the brain, not the other way around. | - Pending |
+| Graph topology is a second signal for truth | Beyond paper-level citations, cross-entity graph relationships must be usable as evidence surface — contradictions and corroborations across the brain feed back into claim evaluation and rating confidence. | - Pending |
 
 ## Evolution
 
@@ -110,4 +116,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-18 after Phase 1 verification*
+*Last updated: 2026-04-18 — Phase 1 verification; framing refined to put "personal brain" and graph-topology-as-second-signal in Core Value, Context, and Key Decisions.*

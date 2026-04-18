@@ -13,10 +13,9 @@
 | Python | Latest stable supported by dependencies | Backend, ingestion, transcription, paper processing, LLM orchestration | Best ecosystem fit for media processing, PDF parsing, embeddings, vector DB clients, and graph tooling. |
 | FastAPI | Latest stable | HTTP API and async job endpoints | Fits Python services, background task orchestration, typed request/response contracts, and frontend API integration. |
 | Next.js + TypeScript | Latest stable | Website, report UI, Markdown browser, graph/search UI | Strong fit for interactive web UI, server/client rendering boundaries, and typed frontend code. |
-| PostgreSQL | Latest stable | Durable job metadata, users, reports, source records, rating snapshots | Keeps operational state separate from Markdown, vectors, and graph relationships. |
+| MongoDB | Latest stable | Durable job metadata, structured entity documents, reports, source records, rating snapshots, and graph relationship edges | Replaces separate Postgres and Neo4j services for v1, reducing local infrastructure while keeping structured metadata and relationship records outside the Markdown vault. |
 | Markdown vault | Plain files | Canonical user-owned knowledge store | Portable, inspectable, Obsidian-compatible, and easy to version or export. |
 | Qdrant | Latest stable | Vector and hybrid search over papers, notes, claims, and transcripts | Official docs cover vector search, filtering, sparse vectors, hybrid queries, full-text search, and relevance tuning. |
-| Neo4j | Latest stable | Knowledge graph for creators, claims, papers, authors, sources, evidence, and topics | Mature graph database with Cypher, visualization, graph algorithms, and vector-index related tooling. |
 | OpenAI Responses API | Current API | Claim extraction, evidence comparison, web search, summarization, optional transcription | Official docs support web search and file search tools; live web search can return cited results. |
 
 ### Supporting Libraries and Services
@@ -29,7 +28,7 @@
 | yt-dlp | Latest stable, compliance-gated | Public video retrieval adapter | Only after platform-terms review; keep replaceable. |
 | PyMuPDF or equivalent | Latest stable | PDF text extraction | Parse downloaded papers for chunking and Markdown summaries. |
 | Celery, Dramatiq, or RQ | Latest stable | Background jobs | Use for long-running ingestion, transcription, paper search, and evaluation jobs. |
-| Docker Compose | Current | Local services | Run Postgres, Qdrant, Neo4j, and app services consistently in development. |
+| Docker Compose | Current | Local services | Run MongoDB, Qdrant, and app services consistently in development. |
 
 ### Development Tools
 
@@ -46,8 +45,8 @@
 |-------------|-------------|-------------------------|
 | Qdrant | OpenAI file search | Use OpenAI file search for a quick hosted prototype; keep Qdrant for owned retrieval and portability. |
 | Qdrant | pgvector | Use pgvector if operational simplicity beats retrieval features. |
-| Neo4j | Memgraph | Use Memgraph if streaming graph updates or local-first deployment become stronger requirements. |
-| Neo4j | PostgreSQL tables | Use relational tables for a very small MVP; switch when graph traversal and relationship queries matter. |
+| MongoDB relationship collections | Neo4j or Memgraph | Use a dedicated graph database later if relationship traversal, graph algorithms, or visualization requirements outgrow document/edge collections. |
+| MongoDB operational documents | PostgreSQL | Use relational tables if strict relational constraints, SQL reporting, or transactional joins become the dominant requirements. |
 | FastAPI | Django | Use Django if admin UI, auth, and ORM conventions become the highest priority. |
 | Next.js | Plain server-rendered templates | Use templates if the UI stays minimal and graph/Markdown browsing is postponed. |
 
@@ -55,7 +54,7 @@
 
 | Avoid | Why | Use Instead |
 |-------|-----|-------------|
-| LLM memory as the durable knowledge store | Locks knowledge into a vendor and weakens auditability. | Markdown vault plus Postgres, Qdrant, and Neo4j. |
+| LLM memory as the durable knowledge store | Locks knowledge into a vendor and weakens auditability. | Markdown vault plus MongoDB and Qdrant. |
 | A single undifferentiated "truth score" | Hides uncertainty and overstates conclusions. | Claim-level evidence labels with citations. |
 | Direct platform-specific scraping spread through the codebase | Breaks when platform markup changes and makes compliance hard to audit. | A narrow ingestion adapter with terms checks and replaceable implementations. |
 | Paper summaries without links to source text | Creates unverifiable derived knowledge. | Markdown summaries with DOI/arXiv/OpenAlex/Semantic Scholar links and evidence chunks. |
@@ -63,12 +62,12 @@
 ## Stack Patterns by Variant
 
 **If local-first or EU-controlled deployment becomes mandatory:**
-- Keep Markdown, Qdrant, Neo4j, and Postgres self-hosted.
+- Keep Markdown, MongoDB, and Qdrant self-hosted.
 - Add provider adapters for LLM and transcription services.
 - Evaluate local transcription and local embedding models during a later milestone.
 
 **If the MVP needs to move quickly:**
-- Start with FastAPI, Next.js, Postgres, Qdrant, Neo4j, and OpenAI APIs.
+- Start with FastAPI, Next.js, MongoDB, Qdrant, and OpenAI APIs.
 - Keep all third-party integrations behind adapters so they can be replaced.
 
 ## Version Compatibility
@@ -77,7 +76,7 @@
 |-----------|-----------------|-------|
 | FastAPI | Python latest stable | Verify current Python support before installation. |
 | Qdrant client | Qdrant server | Pin client and server versions together in Docker Compose. |
-| Neo4j Python driver | Neo4j server | Pin driver major version to server-supported matrix. |
+| MongoDB Python driver | MongoDB server | Pin driver and server versions together in Docker Compose. |
 | OpenAI SDK | Responses API | Verify current SDK method names when implementing. |
 
 ## Sources
@@ -85,7 +84,7 @@
 - https://platform.openai.com/docs/guides/tools-web-search - OpenAI Responses API web search, citations, domain filtering, and live web access.
 - https://platform.openai.com/docs/guides/tools-file-search - OpenAI hosted file search and vector stores.
 - https://qdrant.tech/documentation/search/ - Qdrant search, filtering, hybrid queries, text search, and relevance features.
-- https://neo4j.com/docs/ - Neo4j graph database, Cypher, tooling, and graph data science documentation.
+- https://www.mongodb.com/docs/ - MongoDB document database, aggregation, indexes, and developer tooling documentation.
 - https://developers.tiktok.com/doc/display-api-overview/ - TikTok Display API scope and public video metadata constraints.
 - https://docs.openalex.org/api-entities/works/search-works - OpenAlex work search across titles, abstracts, and full text where available.
 - https://www.semanticscholar.org/product/api - Semantic Scholar Academic Graph API capabilities.

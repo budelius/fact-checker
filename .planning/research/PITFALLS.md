@@ -66,7 +66,7 @@ Phase 3 and Phase 4.
 ### Pitfall 4: Knowledge Store Drift
 
 **What goes wrong:**
-Markdown, Postgres, Qdrant, and Neo4j disagree about entities, source IDs, or latest labels.
+Markdown, MongoDB, and Qdrant disagree about entities, source IDs, relationship edges, or latest labels.
 
 **Why it happens:**
 Multiple stores are necessary but can diverge without stable IDs and reindexing checks.
@@ -135,7 +135,7 @@ Phase 5: Knowledge Browser, Search, Graph, and Ratings.
 | OpenAI web search | Accept answer text without inspecting citations | Require source URLs and stored evidence records. |
 | Paper indexes | Search one API only | Query multiple indexes and merge candidates by DOI/arXiv/title. |
 | Qdrant | Embed everything without payload metadata | Store payload filters for entity type, source ID, paper ID, claim ID, and date. |
-| Neo4j | Store raw text blobs as nodes | Store normalized entities and relationships with links back to Markdown. |
+| MongoDB graph records | Store raw text blobs as relationship documents | Store normalized entities and relationship edges with links back to Markdown. |
 | TikTok | Treat downloader output as stable | Keep adapter replaceable and test with fixtures. |
 
 ## Performance Traps
@@ -171,7 +171,7 @@ Phase 5: Knowledge Browser, Search, Graph, and Ratings.
 - [ ] **Paper matching:** Every selected paper has a recorded matching rationale.
 - [ ] **Markdown notes:** Notes have stable IDs and backlinks to related entities.
 - [ ] **Qdrant index:** Every indexed chunk can be traced back to a Markdown/source record.
-- [ ] **Neo4j graph:** Every graph node links back to canonical metadata or Markdown.
+- [ ] **MongoDB graph relationships:** Every graph entity and edge links back to canonical metadata or Markdown.
 - [ ] **Ratings:** Every rating has an auditable input history.
 
 ## Pitfall-to-Phase Mapping
@@ -181,7 +181,7 @@ Phase 5: Knowledge Browser, Search, Graph, and Ratings.
 | Hallucinated citations | Phase 4 | Reject reports with uncited labels. |
 | Wrong paper matching | Phase 3 | Candidate selection records matching rationale. |
 | Preprints treated as final truth | Phase 3 | Source metadata includes source type and status. |
-| Knowledge store drift | Phase 1 and Phase 5 | Consistency check across Markdown, Postgres, Qdrant, Neo4j. |
+| Knowledge store drift | Phase 1 and Phase 5 | Consistency check across Markdown, MongoDB, Qdrant. |
 | Platform ingestion risk | Phase 2 | TikTok code exists only inside ingestion adapter. |
 | Opaque ratings | Phase 5 | Rating UI shows evidence history and confidence. |
 
@@ -192,7 +192,7 @@ Phase 5: Knowledge Browser, Search, Graph, and Ratings.
 - https://developers.tiktok.com/doc/display-api-overview/ - public video metadata API boundaries.
 - https://developers.tiktok.com/doc/content-sharing-guidelines/ - platform guideline concerns and audit restrictions.
 - https://qdrant.tech/documentation/search/ - search and filtering behavior that requires payload design.
-- https://neo4j.com/docs/ - graph modeling and graph-data-science capabilities.
+- https://www.mongodb.com/docs/ - document storage, aggregation, indexing, and relationship modeling.
 
 ---
 *Pitfalls research for: AI research fact checker*

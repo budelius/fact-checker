@@ -19,7 +19,7 @@
 | Claim-level evidence labels | Users need useful uncertainty, not binary truth. | HIGH | Use supported, contradicted, mixed, insufficient evidence. |
 | Markdown output | The owned knowledge base is the product's core memory. | MEDIUM | Create notes for videos, claims, papers, authors, creators, and reports. |
 | Vector indexing | Future fact checks need retrieval over prior evidence. | MEDIUM | Index chunks and note summaries in Qdrant. |
-| Knowledge graph entities | Source and reputation reasoning needs relationships. | HIGH | Model creators, papers, authors, claims, sources, evidence, topics. |
+| Knowledge graph entities | Source and reputation reasoning needs relationships. | HIGH | Model creators, papers, authors, claims, sources, evidence, topics as MongoDB relationship records. |
 | Markdown browser | User needs to inspect and reuse stored knowledge. | MEDIUM | Obsidian-like UI is part of v1. |
 
 ### Differentiators (Competitive Advantage)
@@ -63,7 +63,7 @@ Markdown notes -> graph entities -> knowledge graph browser and ratings
 - **Evidence evaluation requires paper processing:** Labels must cite evidence chunks, not just search-result snippets.
 - **Ratings require multiple structured entities:** A creator or author rating needs claims, sources, evidence, and history.
 - **Knowledge browser requires Markdown conventions:** The UI should read the same notes users can open outside the app.
-- **Graph storage requires entity extraction:** The graph is only useful if papers, authors, sources, creators, and claims are normalized.
+- **MongoDB relationship storage requires entity extraction:** The graph is only useful if papers, authors, sources, creators, and claims are normalized.
 
 ## MVP Definition
 
@@ -77,7 +77,7 @@ Markdown notes -> graph entities -> knowledge graph browser and ratings
 - [ ] Claim-level evidence labels - required for useful fact checking.
 - [ ] Markdown vault generation - required for ownership and future reuse.
 - [ ] Qdrant indexing - required for future retrieval.
-- [ ] Neo4j graph storage - required for relationship memory.
+- [ ] MongoDB graph relationship storage - required for relationship memory.
 - [ ] Website report and Markdown browser - required for user inspection.
 - [ ] Basic transparent rating records - required to test reputation logic.
 
@@ -107,7 +107,7 @@ Markdown notes -> graph entities -> knowledge graph browser and ratings
 | Evidence labels | HIGH | HIGH | P1 |
 | Markdown vault | HIGH | MEDIUM | P1 |
 | Qdrant indexing | HIGH | MEDIUM | P1 |
-| Neo4j graph storage | HIGH | HIGH | P1 |
+| MongoDB graph relationship storage | HIGH | MEDIUM | P1 |
 | Markdown browser | HIGH | MEDIUM | P1 |
 | Creator/source ratings | MEDIUM | HIGH | P2 |
 | Screenshot analysis | MEDIUM | MEDIUM | P2 |
@@ -121,7 +121,7 @@ Markdown notes -> graph entities -> knowledge graph browser and ratings
 - https://docs.openalex.org/api-entities/works/search-works - paper search capabilities.
 - https://www.semanticscholar.org/product/api - academic graph API capabilities.
 - https://qdrant.tech/documentation/search/ - vector and hybrid retrieval feature set.
-- https://neo4j.com/docs/ - graph and graph-data-science tooling.
+- https://www.mongodb.com/docs/ - document storage, aggregation, indexing, and relationship modeling documentation.
 
 ---
 *Feature research for: AI research fact checker*

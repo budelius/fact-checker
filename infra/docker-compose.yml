@@ -1,8 +1,8 @@
 services:
   mongodb:
     image: mongodb/mongodb-community-server:latest
-    ports:
-      - "27017:27017"
+    expose:
+      - "27017"
     environment:
       MONGODB_INITDB_ROOT_USERNAME: ${MONGODB_ROOT_USERNAME:-factchecker}
       MONGODB_INITDB_ROOT_PASSWORD: ${MONGODB_ROOT_PASSWORD:-factchecker-dev-password}
