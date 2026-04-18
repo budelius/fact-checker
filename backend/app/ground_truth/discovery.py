@@ -60,6 +60,27 @@ class GroundTruthDiscoveryService:
         if self.trace_sink:
             self.trace_sink(event)
 
+    def _provider_name(self, client: object) -> str:
+        return str(getattr(client, "provider", None) or client.__class__.__name__)
+
+    def _search_provider(self, client: object, query) -> tuple[list[PaperCandidate], str | None]:
+        try:
+            return list(client.search(query)), None
+        except Exception as exc:
+            provider = self._provider_name(client)
+            return [], f"{provider}:{exc.__class__.__name__}"
+
+    def _stage_message(self, base: str, failures: list[str]) -> str:
+        if not failures:
+            return base
+
+        unique_failures = sorted(set(failures))
+        preview = ", ".join(unique_failures[:3])
+        suffix = f" Source provider limits/errors: {preview}."
+        if len(unique_failures) > 3:
+            suffix = f" Source provider limits/errors: {preview}, and {len(unique_failures) - 3} more."
+        return f"{base}{suffix}"
+
     def run_for_ingestion_payload(self, ingestion_payload: dict) -> GroundTruthJob:
         ingestion_job_uuid = UUID(str(ingestion_payload["job_uuid"]))
         job = GroundTruthJob(
@@ -90,24 +111,32 @@ class GroundTruthDiscoveryService:
         )
 
         raw_candidates: list[PaperCandidate] = []
+        openai_failures: list[str] = []
         if self.openai_web_client:
             for query in queries:
-                raw_candidates.extend(self.openai_web_client.search(query))
+                candidates, failure = self._search_provider(self.openai_web_client, query)
+                raw_candidates.extend(candidates)
+                if failure:
+                    openai_failures.append(failure)
         self._record(
             job,
             GroundTruthStageName.search_openai_web,
             StageStatus.succeeded if self.openai_web_client else StageStatus.skipped,
-            "search_openai_web completed.",
+            self._stage_message("search_openai_web completed.", openai_failures),
         )
 
+        paper_index_failures: list[str] = []
         for query in queries:
             for client in self.paper_index_clients:
-                raw_candidates.extend(client.search(query))
+                candidates, failure = self._search_provider(client, query)
+                raw_candidates.extend(candidates)
+                if failure:
+                    paper_index_failures.append(failure)
         self._record(
             job,
             GroundTruthStageName.search_paper_indexes,
             StageStatus.succeeded if self.paper_index_clients else StageStatus.skipped,
-            "search_paper_indexes completed.",
+            self._stage_message("search_paper_indexes completed.", paper_index_failures),
         )
 
         job.candidates = merge_candidates(raw_candidates)

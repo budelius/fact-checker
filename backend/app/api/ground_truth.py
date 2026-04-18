@@ -19,6 +19,7 @@ from app.ingestion.jobs import get_job
 from app.repositories.mongo import MongoRepository
 from app.repositories.qdrant import QdrantRepository
 from app.schemas.ground_truth import GroundTruthJob
+from app.schemas.ingestion import JobLifecycleStatus, utc_now
 from app.settings import Settings, get_settings
 
 router = APIRouter(prefix="/ground-truth", tags=["ground-truth"])
@@ -76,6 +77,23 @@ def get_vault_root(settings: Settings = Depends(get_settings)) -> Path:
     return Path(settings.vault_root)
 
 
+def _safe_pipeline_error(exc: Exception) -> str:
+    message = str(exc).splitlines()[0] if str(exc) else exc.__class__.__name__
+    return f"{exc.__class__.__name__}: {message[:300]}"
+
+
+def _failed_ground_truth_job(ingestion_job_uuid: UUID, exc: Exception) -> GroundTruthJob:
+    message = _safe_pipeline_error(exc)
+    now = utc_now()
+    return GroundTruthJob(
+        ingestion_job_uuid=ingestion_job_uuid,
+        status=JobLifecycleStatus.failed,
+        current_operation="Ground-truth discovery failed.",
+        error_message=message,
+        updated_at=now,
+    )
+
+
 @router.post("/jobs/from-ingestion/{ingestion_job_uuid}")
 def start_ground_truth_job_from_ingestion(
     ingestion_job_uuid: UUID,
@@ -90,12 +108,15 @@ def start_ground_truth_job_from_ingestion(
     if not ingestion_payload.get("claims"):
         raise HTTPException(status_code=400, detail="ingestion_job_has_no_claims")
 
-    job = pipeline.run_from_ingestion_payload(
-        ingestion_payload,
-        repository=repository,
-        qdrant_repository=qdrant_repository,
-        vault_root=vault_root,
-    )
+    try:
+        job = pipeline.run_from_ingestion_payload(
+            ingestion_payload,
+            repository=repository,
+            qdrant_repository=qdrant_repository,
+            vault_root=vault_root,
+        )
+    except Exception as exc:
+        job = _failed_ground_truth_job(ingestion_job_uuid, exc)
     return serialize_ground_truth_job(job)
 
 

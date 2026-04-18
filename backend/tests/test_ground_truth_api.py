@@ -42,6 +42,11 @@ class FakePipeline:
         )
 
 
+class FailingPipeline:
+    def run_from_ingestion_payload(self, ingestion_payload, repository, qdrant_repository, vault_root):
+        raise RuntimeError("metadata store unavailable")
+
+
 def _override_dependencies(tmp_path):
     app.dependency_overrides[get_pipeline] = lambda: FakePipeline()
     app.dependency_overrides[get_repository] = lambda: object()
@@ -86,6 +91,34 @@ def test_missing_ingestion_job_returns_404(tmp_path):
 
     assert response.status_code == 404
     assert response.json()["detail"] == "ingestion_job_not_found"
+
+
+def test_pipeline_failure_returns_failed_ground_truth_job(monkeypatch, tmp_path):
+    monkeypatch.setenv("MONGODB_URI", "mongodb://example")
+    monkeypatch.setenv("MONGODB_DATABASE", "fact_checker")
+    monkeypatch.setenv("QDRANT_URL", "http://localhost:6333")
+    monkeypatch.setenv("QDRANT_COLLECTION_KNOWLEDGE", "fact_checker_knowledge")
+    monkeypatch.setenv("VAULT_ROOT", str(tmp_path / "vault"))
+    monkeypatch.setenv("LOG_LEVEL", "INFO")
+    _override_dependencies(tmp_path)
+    app.dependency_overrides[get_pipeline] = lambda: FailingPipeline()
+
+    ingestion_response = client.post(
+        "/ingestion/fixtures/transcript",
+        json={
+            "source_url": "https://www.tiktok.com/@fixture/video/1234567890",
+            "transcript": "The source is arXiv:1706.03762.",
+        },
+    )
+    ingestion_payload = ingestion_response.json()
+
+    response = client.post(f"/ground-truth/jobs/from-ingestion/{ingestion_payload['job_uuid']}")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["status"] == "failed"
+    assert payload["current_operation"] == "Ground-truth discovery failed."
+    assert "RuntimeError: metadata store unavailable" in payload["error_message"]
 
 
 def test_missing_ground_truth_job_returns_404():

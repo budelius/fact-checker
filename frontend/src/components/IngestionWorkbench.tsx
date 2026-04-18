@@ -101,6 +101,12 @@ export function IngestionWorkbench({ onReportChange }: IngestionWorkbenchProps) 
     setReportError(null);
     try {
       const nextGroundTruthJob = await ensureGroundTruthJob();
+      if (nextGroundTruthJob.status === "failed") {
+        setReportJob(null);
+        setReport(null);
+        onReportChange?.(null);
+        throw new Error(nextGroundTruthJob.error_message ?? "ground_truth_discovery_failed");
+      }
       applyReportJob(await startReportJobFromGroundTruth(nextGroundTruthJob.job_uuid));
     } catch (caught) {
       setReportError(caught instanceof Error ? caught.message : "report_generation_failed");

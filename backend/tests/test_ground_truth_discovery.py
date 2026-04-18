@@ -14,6 +14,7 @@ from app.schemas.ground_truth import (
     SourceProvider,
 )
 from app.schemas.ingestion import (
+    JobLifecycleStatus,
     ResearchBasisCandidate,
     ResearchBasisStatus,
     ResearchBasisTriage,
@@ -136,6 +137,13 @@ class FakeProvider:
         return list(self.candidates)
 
 
+class FailingProvider:
+    provider = "failing_index"
+
+    def search(self, query):
+        raise TimeoutError("provider unavailable")
+
+
 def make_ingestion_payload(claim: ExtractedClaim, research_basis: ResearchBasisTriage) -> dict:
     return {
         "job_uuid": str(uuid4()),
@@ -174,6 +182,44 @@ def test_discovery_service_selects_paper_candidates():
         "merge_candidates",
         "select_sources",
     ]
+
+
+def test_discovery_service_continues_when_paper_index_provider_fails():
+    claim = make_claim()
+    research_basis = ResearchBasisTriage(
+        status=ResearchBasisStatus.source_candidates_found,
+        candidates=[ResearchBasisCandidate(candidate_type="arxiv", value="1706.03762", source="test")],
+        reason="fixture",
+    )
+    service = GroundTruthDiscoveryService(
+        paper_index_clients=[FailingProvider(), FakeProvider([make_candidate()])],
+    )
+
+    job = service.run_for_ingestion_payload(make_ingestion_payload(claim, research_basis))
+
+    assert len(job.candidates) == 1
+    assert any(decision.status == CandidateStatus.selected_ground_truth for decision in job.decisions)
+    search_stage = next(stage for stage in job.stages if stage.name.value == "search_paper_indexes")
+    assert search_stage.status == "succeeded"
+    assert "failing_index:TimeoutError" in search_stage.message
+
+
+def test_discovery_service_returns_no_evidence_when_all_paper_indexes_fail():
+    claim = make_claim()
+    research_basis = ResearchBasisTriage(
+        status=ResearchBasisStatus.source_candidates_found,
+        candidates=[ResearchBasisCandidate(candidate_type="arxiv", value="1706.03762", source="test")],
+        reason="fixture",
+    )
+    service = GroundTruthDiscoveryService(paper_index_clients=[FailingProvider()])
+
+    job = service.run_for_ingestion_payload(make_ingestion_payload(claim, research_basis))
+
+    assert job.candidates == []
+    assert job.status == JobLifecycleStatus.succeeded
+    assert job.current_operation == "No scientific evidence found for now."
+    search_stage = next(stage for stage in job.stages if stage.name.value == "search_paper_indexes")
+    assert "failing_index:TimeoutError" in search_stage.message
 
 
 def test_discovery_service_records_no_scientific_evidence():

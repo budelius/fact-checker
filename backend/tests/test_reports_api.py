@@ -69,6 +69,19 @@ class FakePipeline:
         )
 
 
+class FailingPipeline:
+    def run_from_ground_truth(
+        self,
+        ground_truth_job,
+        ingestion_payload,
+        repository,
+        qdrant_repository,
+        vault_root,
+        previous_versions=None,
+    ):
+        raise RuntimeError("report store unavailable")
+
+
 class FakeRepository:
     def __init__(self) -> None:
         self.entities = []
@@ -149,6 +162,20 @@ def test_missing_ground_truth_job_returns_404(tmp_path):
 
     assert response.status_code == 404
     assert response.json()["detail"] == "ground_truth_job_not_found"
+
+
+def test_report_pipeline_failure_returns_failed_job(tmp_path):
+    _override_dependencies(tmp_path)
+    app.dependency_overrides[get_evaluation_pipeline] = lambda: FailingPipeline()
+    ground_truth = _stored_ground_truth_with_ingestion()
+
+    response = client.post(f"/reports/jobs/from-ground-truth/{ground_truth.job_uuid}")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["status"] == "failed"
+    assert payload["current_operation"] == "Fact-check report generation failed."
+    assert "RuntimeError: report store unavailable" in payload["error_message"]
 
 
 def test_rerun_creates_new_report_version(tmp_path):

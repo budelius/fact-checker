@@ -12,9 +12,11 @@ from app.api.ground_truth import (
 )
 from app.evaluation.evaluator import DeterministicEvaluator, OpenAIClaimEvaluator
 from app.evaluation.pipeline import EvaluationPipeline
+from app.evaluation.progress import initial_evaluation_stages
 from app.ingestion.jobs import get_job
 from app.schemas.evaluation import EvaluationJob, ReportVersion
 from app.schemas.ground_truth import GroundTruthJob
+from app.schemas.ingestion import JobLifecycleStatus, utc_now
 from app.settings import Settings, get_settings
 
 router = APIRouter(prefix="/reports", tags=["reports"])
@@ -66,6 +68,29 @@ def _previous_versions(ground_truth_job_uuid: UUID) -> list[ReportVersion]:
     ]
 
 
+def _safe_pipeline_error(exc: Exception) -> str:
+    message = str(exc).splitlines()[0] if str(exc) else exc.__class__.__name__
+    return f"{exc.__class__.__name__}: {message[:300]}"
+
+
+def _failed_evaluation_job(
+    ingestion_job_uuid: UUID,
+    ground_truth_job_uuid: UUID,
+    exc: Exception,
+) -> EvaluationJob:
+    message = _safe_pipeline_error(exc)
+    now = utc_now()
+    return EvaluationJob(
+        ingestion_job_uuid=ingestion_job_uuid,
+        ground_truth_job_uuid=ground_truth_job_uuid,
+        status=JobLifecycleStatus.failed,
+        current_operation="Fact-check report generation failed.",
+        stages=initial_evaluation_stages(),
+        error_message=message,
+        updated_at=now,
+    )
+
+
 def _run_report_job(
     ground_truth_job_uuid: UUID,
     pipeline: EvaluationPipeline,
@@ -84,14 +109,21 @@ def _run_report_job(
     if not ingestion_payload.get("claims"):
         raise HTTPException(status_code=400, detail="ground_truth_job_has_no_claims")
 
-    job = pipeline.run_from_ground_truth(
-        ground_truth,
-        ingestion_payload,
-        repository=repository,
-        qdrant_repository=qdrant_repository,
-        vault_root=vault_root,
-        previous_versions=_previous_versions(ground_truth.job_uuid),
-    )
+    try:
+        job = pipeline.run_from_ground_truth(
+            ground_truth,
+            ingestion_payload,
+            repository=repository,
+            qdrant_repository=qdrant_repository,
+            vault_root=vault_root,
+            previous_versions=_previous_versions(ground_truth.job_uuid),
+        )
+    except Exception as exc:
+        job = _failed_evaluation_job(
+            ground_truth.ingestion_job_uuid,
+            ground_truth.job_uuid,
+            exc,
+        )
     return serialize_evaluation_job(job)
 
 
