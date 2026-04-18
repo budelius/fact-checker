@@ -17,6 +17,13 @@ class Settings(BaseSettings):
     qdrant_collection_knowledge: str = Field(alias="QDRANT_COLLECTION_KNOWLEDGE")
     vault_root: str = Field(alias="VAULT_ROOT")
     log_level: str = Field(alias="LOG_LEVEL")
+    tiktok_media_download_enabled: bool = Field(
+        default=False,
+        alias="TIKTOK_MEDIA_DOWNLOAD_ENABLED",
+    )
+    tiktok_max_video_mb: int = Field(default=200, alias="TIKTOK_MAX_VIDEO_MB")
+    transcription_provider: str = Field(default="disabled", alias="TRANSCRIPTION_PROVIDER")
+    openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
 
 
 @lru_cache
