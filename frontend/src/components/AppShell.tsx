@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { BookOpenText } from "lucide-react";
 
+import type { ReportVersion } from "../api/reports";
 import { sampleNote, vaultSections, type VaultSectionName } from "../data/sampleVault";
 import { IngestionWorkbench } from "./IngestionWorkbench";
 import { MetadataPanel } from "./MetadataPanel";
+import { ReportProvenancePanel } from "./reports/ReportProvenancePanel";
 import { VaultNavigation } from "./VaultNavigation";
 
 export function AppShell() {
   const [activeSection, setActiveSection] = useState<VaultSectionName>("Papers");
+  const [activeReport, setActiveReport] = useState<ReportVersion | null>(null);
 
   return (
     <div className="app-shell">
@@ -16,7 +19,9 @@ export function AppShell() {
           <BookOpenText aria-hidden="true" size={22} />
           <span>Fact Checker</span>
         </div>
-        <div className="topbar__section">TikTok ingestion</div>
+        <div className="topbar__section">
+          {activeReport ? "Fact-check report" : "TikTok ingestion"}
+        </div>
         <button className="topbar__button" type="button">
           Browse vault
         </button>
@@ -31,11 +36,11 @@ export function AppShell() {
       </aside>
 
       <main className="main-pane">
-        <IngestionWorkbench />
+        <IngestionWorkbench onReportChange={setActiveReport} />
       </main>
 
-      <aside className="right-rail" aria-label="Note metadata">
-        <MetadataPanel note={sampleNote} />
+      <aside className="right-rail" aria-label={activeReport ? "Report provenance" : "Note metadata"}>
+        {activeReport ? <ReportProvenancePanel report={activeReport} /> : <MetadataPanel note={sampleNote} />}
       </aside>
     </div>
   );
