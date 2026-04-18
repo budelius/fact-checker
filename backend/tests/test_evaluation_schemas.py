@@ -15,6 +15,14 @@ from app.schemas.evaluation import (
     EvidenceSourceKind,
     ReportVersion,
 )
+from app.evaluation.progress import (
+    STAGE_ORDER,
+    build_evaluation_event,
+    fail_validation_stage,
+    initial_evaluation_stages,
+    update_evaluation_stage,
+)
+from app.schemas.ingestion import StageStatus
 
 
 def test_evaluation_label_allows_expected_values():
@@ -107,6 +115,62 @@ def test_evaluation_job_contains_progress_stage_and_report():
     assert job.current_operation == "Waiting to start evidence evaluation."
     assert job.stages[0].name == EvaluationStageName.load_claims
     assert job.report.markdown_path.endswith("report-v1.md")
+
+
+def test_progress_helpers_expose_all_report_generation_steps():
+    stages = initial_evaluation_stages()
+
+    assert [stage.name for stage in stages] == STAGE_ORDER
+    assert [stage.name.value for stage in stages] == [
+        "load_claims",
+        "load_evidence",
+        "select_citations",
+        "evaluate_claims",
+        "validate_citations",
+        "write_report",
+        "index_and_link",
+    ]
+
+
+def test_progress_helpers_can_mark_failed_validation_stage():
+    job = EvaluationJob(ingestion_job_uuid=uuid4(), ground_truth_job_uuid=uuid4())
+    job.stages = initial_evaluation_stages()
+
+    fail_validation_stage(job, "Uncited non-insufficient label rejected.")
+
+    validation_stage = next(stage for stage in job.stages if stage.name == EvaluationStageName.validate_citations)
+    assert validation_stage.status == StageStatus.failed
+    assert job.current_operation == "Uncited non-insufficient label rejected."
+
+
+def test_build_evaluation_event_uses_evaluation_event_type():
+    job_uuid = uuid4()
+    event = build_evaluation_event(
+        job_uuid,
+        EvaluationStageName.evaluate_claims,
+        StageStatus.running,
+        "Evaluating claims.",
+    )
+
+    assert event["event_type"] == "evaluation"
+    assert event["job_uuid"] == str(job_uuid)
+    assert event["stage"] == "evaluate_claims"
+    assert event["status"] == "running"
+
+
+def test_update_evaluation_stage_sets_current_operation():
+    job = EvaluationJob(ingestion_job_uuid=uuid4(), ground_truth_job_uuid=uuid4())
+
+    update_evaluation_stage(
+        job,
+        EvaluationStageName.load_claims,
+        StageStatus.succeeded,
+        "Loaded claims.",
+    )
+
+    assert job.stages[0].status == StageStatus.succeeded
+    assert job.stages[0].completed_at is not None
+    assert job.current_operation == "Loaded claims."
 
 
 def test_extracted_claim_default_evidence_status_stays_pending():
