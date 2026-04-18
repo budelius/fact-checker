@@ -1,7 +1,7 @@
 from uuid import uuid5
 
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, PointStruct, VectorParams
+from qdrant_client.models import Distance, FieldCondition, Filter, MatchAny, MatchValue, PointStruct, VectorParams
 
 from app.schemas.vector_payloads import QdrantPayload
 
@@ -40,3 +40,46 @@ class QdrantRepository:
             with_vectors=False,
         )
         return [point.payload or {} for point in points]
+
+    def search_payloads(
+        self,
+        query_vector: list[float],
+        limit: int = 10,
+        entity_types: list[str] | None = None,
+        source: str | None = None,
+    ) -> list[dict]:
+        if not self.client.collection_exists(self.collection_name):
+            return []
+
+        conditions = []
+        if entity_types:
+            conditions.append(
+                FieldCondition(
+                    key="entity_type",
+                    match=MatchAny(any=entity_types),
+                )
+            )
+        if source:
+            conditions.append(FieldCondition(key="source", match=MatchValue(value=source)))
+        query_filter = Filter(must=conditions) if conditions else None
+
+        if hasattr(self.client, "query_points"):
+            response = self.client.query_points(
+                collection_name=self.collection_name,
+                query=query_vector,
+                query_filter=query_filter,
+                limit=limit,
+            )
+            points = getattr(response, "points", response)
+        else:
+            points = self.client.search(
+                collection_name=self.collection_name,
+                query_vector=query_vector,
+                query_filter=query_filter,
+                limit=limit,
+            )
+
+        return [
+            {"payload": point.payload or {}, "score": getattr(point, "score", None)}
+            for point in points
+        ]
