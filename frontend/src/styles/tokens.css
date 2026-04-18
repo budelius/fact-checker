@@ -1,0 +1,24 @@
+:root {
+  --color-bg: #f8faf7;
+  --color-surface: #ffffff;
+  --color-ink: #18211f;
+  --color-muted: #60706a;
+  --color-border: #d8e0dc;
+  --color-accent: #256f62;
+  --color-accent-soft: #dceee9;
+  --color-evidence: #8a5a00;
+  --color-destructive: #b42318;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  --topbar-height: 56px;
+  --left-rail-width: 248px;
+  --right-rail-width: 320px;
+
+  --font-sans: Inter, system-ui, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
