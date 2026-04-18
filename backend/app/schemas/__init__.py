@@ -1,0 +1,1 @@
+"""Canonical knowledge-store schemas."""
