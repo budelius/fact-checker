@@ -23,6 +23,7 @@ See: .planning/PROJECT.md (updated 2026-04-18)
 - Phase 2 planned: 2026-04-18
 - Phase 2 plan count: 6 plans in 4 waves
 - Phase 2 completed: 2026-04-18
+- Phase 3 context gathered: 2026-04-18
 
 ## Active Roadmap
 
@@ -36,17 +37,17 @@ See: .planning/PROJECT.md (updated 2026-04-18)
 
 ## Next Command
 
-`$gsd-discuss-phase 3`
+`$gsd-plan-phase 3`
 
 Alternative:
 
-`$gsd-plan-phase 3 --research`
+`$gsd-plan-phase 3 --skip-research`
 
-Discuss or plan Phase 3. Phase 2 delivered URL submission, user-owned video upload, pasted transcript fixtures, progress visibility, pending claims, and source-candidate triage.
+Plan Phase 3. Phase 2 delivered URL submission, user-owned video upload, pasted transcript fixtures, progress visibility, pending claims, and source-candidate triage. Phase 3 context locks creative staged discovery, papers/preprints-only ground truth, full paper processing, and full trace logging.
 
 ## Resume File
 
-`.planning/phases/02-tiktok-ingestion-and-claim-extraction/02-06-SUMMARY.md`
+`.planning/phases/03-ground-truth-discovery-and-paper-processing/03-CONTEXT.md`
 
 ---
 *State initialized: 2026-04-18*
