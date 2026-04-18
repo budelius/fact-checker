@@ -20,9 +20,9 @@ Before planning or implementing a phase, read the project context, requirements,
 
 ## Current Focus
 
-Phase 1: Foundation and Knowledge Store Contracts.
+Phase 2: TikTok Ingestion and Claim Extraction is implemented and ready for verification/handoff.
 
-Goal: establish the app skeleton, storage contracts, provider boundaries, and owned knowledge model that every later phase writes into.
+Goal: accept public TikTok URLs, pasted transcripts, and user-owned video uploads; expose job progress; store local raw video artifacts; extract pending claims from transcript context; and triage whether the content appears research-based before Phase 3 paper discovery.
 
 ## Important Constraints
 
@@ -30,7 +30,7 @@ Goal: establish the app skeleton, storage contracts, provider boundaries, and ow
 - MongoDB is the structured metadata and graph relationship store.
 - Qdrant is the vector database target.
 - OpenAI APIs are allowed for v1, but durable knowledge must remain outside OpenAI-hosted memory.
-- v1 input is public TikTok links only.
+- v1 input includes public TikTok links, pasted transcript fixtures, and user-owned video uploads stored locally under `vault/raw/videos/`.
 - v1 ground truth is papers and preprints only.
 - Fact-check labels are supported, contradicted, mixed, or insufficient evidence.
 - Every label, rating, and report must be traceable to underlying evidence.
@@ -45,11 +45,20 @@ Goal: establish the app skeleton, storage contracts, provider boundaries, and ow
 - `backend/app/schemas/vector_payloads.py`
 - `backend/app/contracts/store_sync.py`
 
+## Phase 2 Contract Files
+
+- `docs/phase-2-ingestion.md`
+- `.planning/phases/02-tiktok-ingestion-and-claim-extraction/02-CONTEXT.md`
+- `.planning/phases/02-tiktok-ingestion-and-claim-extraction/02-UI-SPEC.md`
+- `.planning/phases/02-tiktok-ingestion-and-claim-extraction/02-RESEARCH.md`
+- `backend/app/schemas/ingestion.py`
+- `backend/app/api/ingestion.py`
+
 ## Next Step
 
 Run:
 
-`$gsd-discuss-phase 1`
+`$gsd-plan-phase 3`
 
 For frontend interaction design before planning, run:
 

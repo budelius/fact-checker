@@ -9,7 +9,7 @@
 | Phase | Name | Goal | Requirements |
 |-------|------|------|--------------|
 | 1 | Foundation and Knowledge Store Contracts | Establish the app skeleton, storage contracts, provider boundaries, and owned knowledge model that every later phase writes into. | KB-01, KB-02, KB-03, KB-04, KB-05, OPS-01, OPS-02, OPS-03, OPS-04 |
-| 2 | TikTok Ingestion and Claim Extraction | Let a user submit a public TikTok URL and turn the video into timestamped AI research claims with transcript and visual context. | ING-01, ING-02, ING-03, ING-04, ING-05, CLM-01, CLM-02, CLM-03, UI-01 |
+| 2 | TikTok Ingestion and Claim Extraction | Let a user submit a public TikTok URL or upload a video and turn the content into timestamped AI research claims with transcript and visual context. | ING-01, ING-02, ING-03, ING-04, ING-05, CLM-01, CLM-02, CLM-03, UI-01 |
 | 3 | Ground-Truth Discovery and Paper Processing | Find the right papers/preprints, process them into reusable evidence, and store paper knowledge as Markdown plus indexed chunks. | SRC-01, SRC-02, SRC-03, SRC-04, SRC-05, PPR-01, PPR-02, PPR-03, PPR-04, PPR-05 |
 | 4 | Evidence Evaluation and Fact-Check Reports | Compare each video claim against stored source evidence and produce cited, uncertainty-aware fact-check reports. | EVAL-01, EVAL-02, EVAL-03, EVAL-04, EVAL-05, UI-02 |
 | 5 | Knowledge Browser, Search, Graph, and Ratings | Make the accumulated Markdown/vector/graph knowledge useful for future checks through browsing, search, graph inspection, consistency checks, and transparent ratings. | KB-06, UI-03, UI-04, UI-05, RAT-01, RAT-02, RAT-03 |
@@ -44,7 +44,9 @@
 
 ### Phase 2: TikTok Ingestion and Claim Extraction
 
-**Goal:** Let a user submit a public TikTok URL and turn the video into timestamped AI research claims with transcript and visual context.
+**Status:** Complete (verified 2026-04-18)
+
+**Goal:** Let a user submit a public TikTok URL or upload a user-owned video and turn the content into timestamped AI research claims with transcript and visual context.
 
 **Requirements:** ING-01, ING-02, ING-03, ING-04, ING-05, CLM-01, CLM-02, CLM-03, UI-01
 
@@ -52,7 +54,7 @@
 
 **Success Criteria:**
 
-1. User can submit a public TikTok URL and receive a job ID with visible status.
+1. User can submit a public TikTok URL or upload a video file and receive a job ID with visible status.
 2. The ingestion adapter records public metadata and media/transcript retrieval results without leaking platform-specific behavior outside the adapter.
 3. The transcript pipeline uses available captions or a transcription fallback and stores provenance.
 4. Claim extraction creates atomic claims with timestamps, transcript snippets, and screenshot references.

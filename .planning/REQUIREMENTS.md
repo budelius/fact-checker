@@ -9,17 +9,17 @@ Requirements for the first release. Each maps to roadmap phases.
 
 ### Ingestion
 
-- [ ] **ING-01**: User can submit a public TikTok video URL from a website.
-- [ ] **ING-02**: User can see whether a submitted fact-checking job is pending, running, failed, or complete.
-- [ ] **ING-03**: System can retrieve public TikTok video metadata and media through a compliance-gated ingestion adapter.
-- [ ] **ING-04**: System can retrieve source captions or generate a transcript when captions are unavailable.
-- [ ] **ING-05**: System can capture representative screenshots or keyframes for visual context.
+- [x] **ING-01**: User can submit a public TikTok video URL from a website.
+- [x] **ING-02**: User can see whether a submitted fact-checking job is pending, running, failed, or complete.
+- [x] **ING-03**: System can retrieve public TikTok video metadata and media through a compliance-gated ingestion adapter.
+- [x] **ING-04**: System can retrieve source captions or generate a transcript when captions are unavailable.
+- [x] **ING-05**: System can capture representative screenshots or keyframes for visual context.
 
 ### Claims
 
-- [ ] **CLM-01**: System can extract atomic AI research claims from the video transcript.
-- [ ] **CLM-02**: Each extracted claim stores the source video, timestamp, transcript excerpt, and any relevant screenshot reference.
-- [ ] **CLM-03**: System can preserve claim context separately from evidence so later evaluations can be rerun.
+- [x] **CLM-01**: System can extract atomic AI research claims from the video transcript.
+- [x] **CLM-02**: Each extracted claim stores the source video, timestamp, transcript excerpt, and any relevant screenshot reference.
+- [x] **CLM-03**: System can preserve claim context separately from evidence so later evaluations can be rerun.
 
 ### Ground Truth
 
@@ -56,7 +56,7 @@ Requirements for the first release. Each maps to roadmap phases.
 
 ### User Interface
 
-- [ ] **UI-01**: User can paste a TikTok URL into a web form and start a fact-checking job.
+- [x] **UI-01**: User can paste a TikTok URL into a web form and start a fact-checking job.
 - [ ] **UI-02**: User can view a report page with extracted claims, labels, evidence, citations, screenshots, and uncertainty notes.
 - [ ] **UI-03**: User can browse the Markdown knowledge base through an Obsidian-like web UI.
 - [ ] **UI-04**: User can search stored notes, papers, claims, and reports through a vector-backed search UI.
@@ -120,14 +120,14 @@ Explicitly excluded. Documented to prevent scope creep.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ING-01 | Phase 2 | Pending |
-| ING-02 | Phase 2 | Pending |
-| ING-03 | Phase 2 | Pending |
-| ING-04 | Phase 2 | Pending |
-| ING-05 | Phase 2 | Pending |
-| CLM-01 | Phase 2 | Pending |
-| CLM-02 | Phase 2 | Pending |
-| CLM-03 | Phase 2 | Pending |
+| ING-01 | Phase 2 | Complete |
+| ING-02 | Phase 2 | Complete |
+| ING-03 | Phase 2 | Complete |
+| ING-04 | Phase 2 | Complete |
+| ING-05 | Phase 2 | Complete |
+| CLM-01 | Phase 2 | Complete |
+| CLM-02 | Phase 2 | Complete |
+| CLM-03 | Phase 2 | Complete |
 | SRC-01 | Phase 3 | Pending |
 | SRC-02 | Phase 3 | Pending |
 | SRC-03 | Phase 3 | Pending |
@@ -149,7 +149,7 @@ Explicitly excluded. Documented to prevent scope creep.
 | KB-04 | Phase 1 | Complete |
 | KB-05 | Phase 1 | Complete |
 | KB-06 | Phase 5 | Pending |
-| UI-01 | Phase 2 | Pending |
+| UI-01 | Phase 2 | Complete |
 | UI-02 | Phase 4 | Pending |
 | UI-03 | Phase 5 | Pending |
 | UI-04 | Phase 5 | Pending |
@@ -169,4 +169,4 @@ Explicitly excluded. Documented to prevent scope creep.
 
 ---
 *Requirements defined: 2026-04-18*
-*Last updated: 2026-04-18 after Phase 1 verification*
+*Last updated: 2026-04-18 after Phase 2 verification*
