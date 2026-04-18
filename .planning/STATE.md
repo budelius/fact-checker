@@ -1,15 +1,15 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: v1.0 milestone archived
-last_updated: "2026-04-18T18:30:00.000Z"
+milestone: v1.1
+milestone_name: Report Generation Responsiveness
+status: milestone planned
+last_updated: "2026-04-18T17:08:30Z"
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 29
-  completed_plans: 29
-  percent: 100
+  total_phases: 4
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -19,66 +19,45 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-18)
 
 **Core value:** Save time verifying AI research claims while keeping the accumulated evidence and knowledge graph owned by the user or company.
-**Current focus:** Planning next milestone
+**Current focus:** v1.1 Report Generation Responsiveness
 
 ## Current Status
 
 - Project initialized: 2026-04-18
-- Requirements defined: 41 v1 requirements
-- Roadmap defined: 5 phases
-- Current phase: Phase 5
-- Phase status: Complete, verified 2026-04-18
-- Phase 1 planned: 2026-04-18
-- Phase 1 plan count: 5 plans in 2 waves
-- Phase 1 completed: 2026-04-18
-- Phase 2 context gathered: 2026-04-18
-- Phase 2 UI-SPEC approved: 2026-04-18
-- Phase 2 researched: 2026-04-18
-- Phase 2 planned: 2026-04-18
-- Phase 2 plan count: 6 plans in 4 waves
-- Phase 2 completed: 2026-04-18
-- Phase 3 context gathered: 2026-04-18
-- Phase 3 researched: 2026-04-18
-- Phase 3 planned: 2026-04-18
-- Phase 3 plan count: 6 plans in 4 waves
-- Phase 3 completed: 2026-04-18
-- Phase 4 context gathered: 2026-04-18
-- Phase 4 UI-SPEC approved: 2026-04-18
-- Phase 4 researched: 2026-04-18
-- Phase 4 planned: 2026-04-18
-- Phase 4 plan count: 6 plans in 5 waves
-- Phase 4 completed: 2026-04-18
-- Phase 5 context gathered: 2026-04-18
-- Phase 5 UI-SPEC approved: 2026-04-18
-- Phase 5 researched: 2026-04-18
-- Phase 5 planned: 2026-04-18
-- Phase 5 plan count: 6 plans in 4 waves
-- Phase 5 completed: 2026-04-18
 - v1.0 MVP archived: 2026-04-18
+- v1.1 requirements defined: 2026-04-18
+- v1.1 roadmap defined: 2026-04-18
+- Current phase: Phase 6
+- Phase status: Not started
 
 ## Active Roadmap
 
 | Phase | Status | Progress |
 |-------|--------|----------|
-| 1 - Foundation and Knowledge Store Contracts | Complete | Verified |
-| 2 - TikTok Ingestion and Claim Extraction | Complete | Verified |
-| 3 - Ground-Truth Discovery and Paper Processing | Complete | Verified |
-| 4 - Evidence Evaluation and Fact-Check Reports | Complete | Verified |
-| 5 - Knowledge Browser, Search, Graph, and Ratings | Complete | Verified |
+| 6 - Report Job Lifecycle and Async Execution | Planned | 0/0 plans |
+| 7 - Bounded Ground-Truth and Evidence Reuse | Planned | 0/0 plans |
+| 8 - Report Generation UX Redesign | Planned | 0/0 plans |
+| 9 - v1.1 Verification and Recovery Hardening | Planned | 0/0 plans |
+
+## Completed Milestones
+
+| Milestone | Status | Archive |
+|-----------|--------|---------|
+| v1.0 MVP | Shipped 2026-04-18 | `.planning/milestones/v1.0-ROADMAP.md`, `.planning/milestones/v1.0-REQUIREMENTS.md` |
 
 ## Next Command
 
-`$gsd-new-milestone`
+`$gsd-discuss-phase 6`
 
 Alternative:
 
-`$gsd-cleanup`
+`$gsd-plan-phase 6`
 
-v1.0 MVP is archived in `.planning/milestones/`. Phase directories remain in `.planning/phases/` as raw execution history.
+Phase 6 should focus on the backend job lifecycle before the UX redesign depends on it.
 
 ## Resume File
 
 None
 
 ---
-*State initialized: 2026-04-18*
+*State updated: 2026-04-18*

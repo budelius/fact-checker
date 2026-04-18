@@ -3,20 +3,22 @@
 ## Current State
 
 **Shipped version:** v1.0 MVP on 2026-04-18
-**Status:** End-to-end local MVP complete.
+**Current milestone:** v1.1 Report Generation Responsiveness
+**Status:** Planning v1.1 around async report generation and report UX.
 
 Fact Checker v1.0 can take TikTok-oriented inputs, extract timestamped AI research claims, discover relevant papers or preprints, process source evidence, generate cited fact-check reports, and expose the resulting owned knowledge through a web vault browser with search, graph inspection, consistency checks, annotations, and evidence-state ratings.
 
-## Next Milestone Goals
+## Current Milestone: v1.1 Report Generation Responsiveness
 
-Fresh requirements have not been defined yet. Start the next cycle with `$gsd-new-milestone`.
+The next product fix is to make report generation feel trustworthy and usable. Today the frontend-triggered "Generate report" path can still spend a long time synchronously running Phase 3 live paper discovery and processing before Phase 4 evaluation. It no longer fails as a misleading fake CORS issue, but the user experience is still poor because the UI blocks behind a long request and does not make the work, limits, or recovery path clear.
 
-Candidate directions to consider:
+v1.1 focuses on:
 
-- Harden deployment, authentication, and multi-user ownership boundaries.
-- Improve live ingestion compliance and provider reliability.
-- Expand reindex/rerun workflows and consistency repair tooling.
-- Add organization-specific source policies or alternative providers.
+- Making ground-truth discovery and report generation truly async/pollable from the user's perspective.
+- Returning a job identity immediately and preserving progress across refreshes.
+- Limiting live paper discovery/processing for UI-triggered runs, with full refresh available when explicitly chosen.
+- Reusing stored evidence where possible before launching expensive provider calls.
+- Redesigning the report-generation UX so users can understand what is happening, why it is taking time, what limits apply, and what to do after errors.
 
 ## What This Is
 
@@ -42,7 +44,7 @@ Own the knowledge, not just the verdict. Fact Checker saves time verifying AI re
 
 ### Active
 
-- [ ] Define next milestone requirements.
+- [ ] v1.1 async report generation and responsive report UX requirements.
 
 ### Out of Scope
 
@@ -73,6 +75,10 @@ Current codebase state after v1.0:
 - Frontend: React/Vite/Yarn workspace with ingestion workbench, report page, page-first knowledge browser, command palette, graph/consistency panels, annotations, and rating badges.
 - Durable knowledge: Markdown under `vault/wiki/`, raw inputs under `vault/raw/`, MongoDB entities/relationships/annotations, and Qdrant payloads traceable to UUIDs and vault paths.
 - Verification at close: 183 backend tests passed, frontend production build passed, and Phase 5 rating-copy safety grep passed.
+
+Known v1.1 product issue:
+
+- Report generation from the UI still couples long-running ground-truth discovery/paper processing with report creation. The current frontend waits on the full sequence, exposes limited progress, and makes slow or failed runs feel broken even when the backend is doing valid work.
 
 Why this needs to exist:
 
@@ -119,6 +125,7 @@ Known terms:
 | The personal brain is the primary artifact | Framing the knowledge graph as the product (not as a side effect of reports) shapes storage, UI, and evaluation priorities — reports are views into the brain, not the other way around. | Validated in v1.0 |
 | Graph topology is a second signal for truth | Beyond paper-level citations, cross-entity graph relationships must be usable as evidence surface — contradictions and corroborations across the brain feed back into claim evaluation and rating confidence. | Initial browser/graph surface validated in v1.0 |
 | Ratings use evidence-state badges | Badge language avoids hidden trust or reputation scoring while exposing evidence count, label distribution, source basis, and confidence. | Validated in v1.0 |
+| Report generation must be job-oriented | Live discovery, paper processing, evaluation, Markdown writing, and indexing can exceed a normal request/attention window, so the product should expose durable progress and recovery instead of blocking behind one POST. | Active in v1.1 |
 
 ## Evolution
 
@@ -138,4 +145,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-18 after v1.0 milestone*
+*Last updated: 2026-04-18 for v1.1 milestone initialization*
