@@ -1,9 +1,11 @@
 from pathlib import Path
 
+from app.contracts.vault import expected_wiki_path
 from app.ground_truth.acquisition import acquire_paper_pdf
 from app.ground_truth.chunking import chunk_parsed_paper
 from app.ground_truth.discovery import GroundTruthDiscoveryService
 from app.ground_truth.indexing import EmbeddingProvider, index_paper_chunks, index_paper_summaries
+from app.ground_truth.markdown import paper_slug
 from app.ground_truth.parsing import parse_pdf_to_pages
 from app.ground_truth.persistence import persist_paper_knowledge
 from app.ground_truth.summarization import PaperSummarizer, summarize_without_provider
@@ -78,6 +80,7 @@ class GroundTruthPipeline:
         ]
         for candidate in selected_candidates:
             metadata = self._metadata_from_candidate(candidate)
+            metadata.vault_path = expected_wiki_path("papers", paper_slug(metadata))
             acquisition = acquire_paper_pdf(
                 candidate,
                 vault_root,
@@ -95,7 +98,7 @@ class GroundTruthPipeline:
                         candidate.uuid,
                         candidate.uuid,
                         parsed,
-                        vault_path=f"vault/wiki/papers/{candidate.title.lower().replace(' ', '-')}.md",
+                        vault_path=metadata.vault_path,
                         source_url=candidate.source_url or candidate.pdf_url or "",
                     )
 

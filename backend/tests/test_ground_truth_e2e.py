@@ -1,4 +1,4 @@
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from fastapi.testclient import TestClient
 
@@ -197,6 +197,7 @@ def test_ground_truth_pipeline_processes_selected_paper_fixture(monkeypatch, tmp
     assert len(job.papers) == 1
     assert job.papers[0].vault_path == "vault/wiki/papers/attention-is-all-you-need.md"
     assert len(job.chunks) >= 1
+    assert job.chunks[0].vault_path == job.papers[0].vault_path
     assert (tmp_path / "vault" / "wiki" / "papers" / "attention-is-all-you-need.md").exists()
     assert qdrant.points
 
@@ -260,6 +261,7 @@ def test_ground_truth_api_fixture_path_processes_selected_paper(monkeypatch, tmp
     assert payload["papers"][0]["vault_path"] == "vault/wiki/papers/attention-is-all-you-need.md"
     assert payload["chunks"]
     assert qdrant.points
+    assert qdrant.points[0][0].vault_path == payload["papers"][0]["vault_path"]
 
     fetched_ingestion = client.get(f"/ingestion/jobs/{ingestion_payload_response['job_uuid']}")
     assert fetched_ingestion.json()["claims"][0]["evidence_status"] == "pending"
