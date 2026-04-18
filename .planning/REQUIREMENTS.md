@@ -23,19 +23,19 @@ Requirements for the first release. Each maps to roadmap phases.
 
 ### Ground Truth
 
-- [ ] **SRC-01**: System can search for relevant papers and preprints using OpenAI live web search with citation capture.
-- [ ] **SRC-02**: System can search paper indexes such as OpenAlex, Semantic Scholar, and arXiv for candidate ground-truth sources.
-- [ ] **SRC-03**: System can merge candidate sources by stable identifiers such as DOI, arXiv ID, OpenAlex ID, Semantic Scholar ID, title, and authors.
-- [ ] **SRC-04**: System can record why a candidate paper was selected or rejected for a claim.
-- [ ] **SRC-05**: System can reject or mark non-paper sources as supplemental rather than v1 ground truth.
+- [x] **SRC-01**: System can search for relevant papers and preprints using OpenAI live web search with citation capture.
+- [x] **SRC-02**: System can search paper indexes such as OpenAlex, Semantic Scholar, and arXiv for candidate ground-truth sources.
+- [x] **SRC-03**: System can merge candidate sources by stable identifiers such as DOI, arXiv ID, OpenAlex ID, Semantic Scholar ID, title, and authors.
+- [x] **SRC-04**: System can record why a candidate paper was selected or rejected for a claim.
+- [x] **SRC-05**: System can reject or mark non-paper sources as supplemental rather than v1 ground truth.
 
 ### Papers
 
-- [ ] **PPR-01**: System can store paper metadata including title, authors, source, publication/preprint status, date, DOI/arXiv URL when available, and source links.
-- [ ] **PPR-02**: System can download or link paper PDFs when available through lawful public access.
-- [ ] **PPR-03**: System can parse paper text into reusable chunks with source metadata.
-- [ ] **PPR-04**: System can summarize each paper as Markdown with claims, methods, limitations, links, references, and provenance.
-- [ ] **PPR-05**: System can index paper chunks and summaries for retrieval.
+- [x] **PPR-01**: System can store paper metadata including title, authors, source, publication/preprint status, date, DOI/arXiv URL when available, and source links.
+- [x] **PPR-02**: System can download or link paper PDFs when available through lawful public access.
+- [x] **PPR-03**: System can parse paper text into reusable chunks with source metadata.
+- [x] **PPR-04**: System can summarize each paper as Markdown with claims, methods, limitations, links, references, and provenance.
+- [x] **PPR-05**: System can index paper chunks and summaries for retrieval.
 
 ### Evaluation
 
@@ -128,16 +128,16 @@ Explicitly excluded. Documented to prevent scope creep.
 | CLM-01 | Phase 2 | Complete |
 | CLM-02 | Phase 2 | Complete |
 | CLM-03 | Phase 2 | Complete |
-| SRC-01 | Phase 3 | Pending |
-| SRC-02 | Phase 3 | Pending |
-| SRC-03 | Phase 3 | Pending |
-| SRC-04 | Phase 3 | Pending |
-| SRC-05 | Phase 3 | Pending |
-| PPR-01 | Phase 3 | Pending |
-| PPR-02 | Phase 3 | Pending |
-| PPR-03 | Phase 3 | Pending |
-| PPR-04 | Phase 3 | Pending |
-| PPR-05 | Phase 3 | Pending |
+| SRC-01 | Phase 3 | Complete |
+| SRC-02 | Phase 3 | Complete |
+| SRC-03 | Phase 3 | Complete |
+| SRC-04 | Phase 3 | Complete |
+| SRC-05 | Phase 3 | Complete |
+| PPR-01 | Phase 3 | Complete |
+| PPR-02 | Phase 3 | Complete |
+| PPR-03 | Phase 3 | Complete |
+| PPR-04 | Phase 3 | Complete |
+| PPR-05 | Phase 3 | Complete |
 | EVAL-01 | Phase 4 | Pending |
 | EVAL-02 | Phase 4 | Pending |
 | EVAL-03 | Phase 4 | Pending |
@@ -169,4 +169,4 @@ Explicitly excluded. Documented to prevent scope creep.
 
 ---
 *Requirements defined: 2026-04-18*
-*Last updated: 2026-04-18 after Phase 2 verification*
+*Last updated: 2026-04-18 after Phase 3 verification*

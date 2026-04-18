@@ -68,6 +68,8 @@
 
 ### Phase 3: Ground-Truth Discovery and Paper Processing
 
+**Status:** Complete (verified 2026-04-18)
+
 **Goal:** Find the right papers/preprints, process them into reusable evidence, and store paper knowledge as Markdown plus indexed chunks.
 
 **Requirements:** SRC-01, SRC-02, SRC-03, SRC-04, SRC-05, PPR-01, PPR-02, PPR-03, PPR-04, PPR-05

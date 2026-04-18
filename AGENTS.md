@@ -20,9 +20,9 @@ Before planning or implementing a phase, read the project context, requirements,
 
 ## Current Focus
 
-Phase 2: TikTok Ingestion and Claim Extraction is implemented and ready for verification/handoff.
+Phase 4: Evidence Evaluation and Fact-Check Reports is ready to discuss and plan.
 
-Goal: accept public TikTok URLs, pasted transcripts, and user-owned video uploads; expose job progress; store local raw video artifacts; extract pending claims from transcript context; and triage whether the content appears research-based before Phase 3 paper discovery.
+Goal: compare each extracted video claim against selected Phase 3 paper evidence and produce cited, uncertainty-aware fact-check reports without unsupported labels.
 
 ## Important Constraints
 
@@ -54,12 +54,24 @@ Goal: accept public TikTok URLs, pasted transcripts, and user-owned video upload
 - `backend/app/schemas/ingestion.py`
 - `backend/app/api/ingestion.py`
 
+## Phase 3 Contract Files
+
+- `docs/phase-3-ground-truth.md`
+- `.planning/phases/03-ground-truth-discovery-and-paper-processing/03-CONTEXT.md`
+- `.planning/phases/03-ground-truth-discovery-and-paper-processing/03-RESEARCH.md`
+- `backend/app/schemas/ground_truth.py`
+- `backend/app/api/ground_truth.py`
+- `backend/app/ground_truth/discovery.py`
+- `backend/app/ground_truth/pipeline.py`
+- `backend/app/ground_truth/persistence.py`
+- `backend/app/ground_truth/indexing.py`
+
 ## Next Step
 
 Run:
 
-`$gsd-plan-phase 3`
+`$gsd-discuss-phase 4`
 
-For frontend interaction design before planning, run:
+For frontend interaction design before planning Phase 4, run:
 
-`$gsd-ui-phase 1`
+`$gsd-ui-phase 4`
