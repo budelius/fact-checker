@@ -9,6 +9,7 @@ from app.schemas.relationships import KnowledgeRelationship
 class MongoRepository:
     entity_collection_name = "entities"
     relationship_collection_name = "relationships"
+    annotation_collection_name = "annotations"
     ingestion_job_collection_name = "ingestion_jobs"
     pipeline_event_collection_name = "pipeline_events"
 
@@ -22,6 +23,10 @@ class MongoRepository:
     @property
     def relationships(self):
         return self.database[self.relationship_collection_name]
+
+    @property
+    def annotations(self):
+        return self.database[self.annotation_collection_name]
 
     @property
     def ingestion_jobs(self):
@@ -45,3 +50,42 @@ class MongoRepository:
 
     def get_entity(self, uuid: UUID) -> dict | None:
         return self.entities.find_one({"uuid": str(uuid)}, {"_id": False})
+
+    def list_entities(self, entity_type: str | None = None) -> list[dict]:
+        query = {"entity_type": entity_type} if entity_type else {}
+        return list(self.entities.find(query, {"_id": False}))
+
+    def list_relationships(
+        self,
+        source_uuid: UUID | None = None,
+        target_uuid: UUID | None = None,
+    ) -> list[dict]:
+        if source_uuid and target_uuid:
+            query = {
+                "$or": [
+                    {"source_uuid": str(source_uuid)},
+                    {"target_uuid": str(target_uuid)},
+                ]
+            }
+        elif source_uuid:
+            query = {"source_uuid": str(source_uuid)}
+        elif target_uuid:
+            query = {"target_uuid": str(target_uuid)}
+        else:
+            query = {}
+        return list(self.relationships.find(query, {"_id": False}))
+
+    def upsert_annotation(self, annotation: dict) -> None:
+        self.annotations.update_one(
+            {"uuid": str(annotation["uuid"])},
+            {"$set": annotation},
+            upsert=True,
+        )
+
+    def list_annotations(self, target_entity_uuid: UUID) -> list[dict]:
+        return list(
+            self.annotations.find(
+                {"target_entity_uuid": str(target_entity_uuid)},
+                {"_id": False},
+            )
+        )

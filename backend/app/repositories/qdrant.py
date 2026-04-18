@@ -28,3 +28,15 @@ class QdrantRepository:
             payload=payload.model_dump(mode="json"),
         )
         self.client.upsert(collection_name=self.collection_name, points=[point])
+
+    def scroll_payloads(self, limit: int = 1000) -> list[dict]:
+        if not self.client.collection_exists(self.collection_name):
+            return []
+
+        points, _offset = self.client.scroll(
+            collection_name=self.collection_name,
+            limit=limit,
+            with_payload=True,
+            with_vectors=False,
+        )
+        return [point.payload or {} for point in points]
