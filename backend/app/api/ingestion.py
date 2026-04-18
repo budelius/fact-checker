@@ -1,10 +1,15 @@
+from tempfile import TemporaryDirectory
 from pathlib import Path
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel
 
-from app.ingestion.adapters.tiktok import fetch_public_metadata, is_supported_tiktok_url
+from app.ingestion.adapters.tiktok import (
+    extract_subtitle_file,
+    fetch_public_metadata,
+    is_supported_tiktok_url,
+)
 from app.ingestion.claims import extract_fixture_claims
 from app.ingestion.jobs import create_ingestion_job, get_job, mark_job_succeeded, save_job, serialize_job
 from app.ingestion.keyframes import build_screenshot_artifact
@@ -148,6 +153,16 @@ def _complete_transcript_job(
             media_artifact_details,
         )
 
+    if public_metadata:
+        _add_artifact(
+            job,
+            ArtifactType.public_metadata,
+            StageStatus.succeeded,
+            "Public metadata",
+            "Public metadata retrieved.",
+            _metadata_details(job.source_url, public_metadata),
+        )
+
     _add_artifact(
         job,
         ArtifactType.transcript,
@@ -193,7 +208,7 @@ def _complete_transcript_job(
     return save_job(
         serialize_job(
             job,
-            public_metadata=public_metadata or {},
+            public_metadata=_metadata_details(job.source_url, public_metadata) if public_metadata else {},
             transcript_artifact=transcript,
             screenshots=screenshots,
             claims=claims,
@@ -238,11 +253,27 @@ async def submit_tiktok_url(request: TikTokSubmitRequest) -> dict:
             "Public metadata retrieved." if metadata else "Public metadata unavailable.",
         )
 
+    update_stage(job, IngestionStageName.build_transcript, StageStatus.running, "Reading captions.")
+    transcript = None
+    with TemporaryDirectory(prefix="fact-checker-subs-") as output_dir:
+        subtitle_file = await extract_subtitle_file(request.url, Path(output_dir))
+        if subtitle_file is not None:
+            transcript = build_transcript_artifact(
+                source_video_uuid=job.video_uuid or uuid4(),
+                method=TranscriptRetrievalMethod.subtitle_file,
+                source_url=request.url,
+                raw_text=subtitle_file.read_text(encoding="utf-8", errors="replace"),
+                provider="yt-dlp",
+            )
+
+    if transcript is not None:
+        return _complete_transcript_job(job, transcript, public_metadata=metadata)
+
     update_stage(
         job,
         IngestionStageName.build_transcript,
-        StageStatus.skipped,
-        "Use the pasted-transcript fallback to run local claim extraction.",
+        StageStatus.failed,
+        "Captions unavailable. Claim extraction needs a transcript.",
     )
     job.status = JobLifecycleStatus.pending
     job.current_operation = (

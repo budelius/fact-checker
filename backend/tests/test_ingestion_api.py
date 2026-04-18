@@ -34,7 +34,20 @@ def test_submit_supported_tiktok_returns_job_uuid(monkeypatch):
             "description": "arXiv:1706.03762",
         }
 
+    async def fake_extract_subtitle_file(_url, output_dir):
+        subtitle_file = output_dir / "subs.en.vtt"
+        subtitle_file.write_text(
+            "WEBVTT\n\n"
+            "00:00:01.000 --> 00:00:03.500\n"
+            "A paper says transformers scale well.\n\n"
+            "00:00:04.000 --> 00:00:06.000\n"
+            "The source is arXiv:1706.03762.\n",
+            encoding="utf-8",
+        )
+        return subtitle_file
+
     monkeypatch.setattr("app.api.ingestion.fetch_public_metadata", fake_fetch_public_metadata)
+    monkeypatch.setattr("app.api.ingestion.extract_subtitle_file", fake_extract_subtitle_file)
 
     response = client.post(
         "/ingestion/tiktok",
@@ -44,11 +57,11 @@ def test_submit_supported_tiktok_returns_job_uuid(monkeypatch):
     assert response.status_code == 200
     payload = response.json()
     assert UUID(payload["job_uuid"])
-    assert payload["status"] == "pending"
-    assert payload["current_operation"] == (
-        "Public metadata retrieved. Add a pasted transcript to run local claim extraction."
-    )
+    assert payload["status"] == "succeeded"
+    assert "ready for paper discovery" in payload["current_operation"]
     assert payload["public_metadata"]["external_video_id"] == "1234567890"
+    assert payload["transcript_artifact"]["provenance"]["method"] == "subtitle_file"
+    assert payload["claims"][0]["evidence_status"] == "pending"
     metadata_artifact = next(
         artifact for artifact in payload["artifacts"] if artifact["artifact_type"] == "public_metadata"
     )
