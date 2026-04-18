@@ -118,7 +118,7 @@
 
 ### Phase 5: Knowledge Browser, Search, Graph, and Ratings
 
-**Status:** Planned
+**Status:** Complete (verified 2026-04-18)
 
 **Goal:** Make the accumulated Markdown/vector/graph knowledge useful for future checks through browsing, search, graph inspection, consistency checks, and transparent ratings.
 

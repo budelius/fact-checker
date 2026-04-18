@@ -52,21 +52,21 @@ Requirements for the first release. Each maps to roadmap phases.
 - [x] **KB-03**: System can keep Markdown files as the canonical human-readable knowledge store.
 - [x] **KB-04**: System can index Markdown notes and source chunks in Qdrant with filters for entity type, source, date, and relationships.
 - [x] **KB-05**: System can write graph entities and relationships to MongoDB for creators, claims, papers, authors, sources, evidence, and topics.
-- [ ] **KB-06**: System can run a consistency check between Markdown, MongoDB metadata and relationships, and Qdrant.
+- [x] **KB-06**: System can run a consistency check between Markdown, MongoDB metadata and relationships, and Qdrant.
 
 ### User Interface
 
 - [x] **UI-01**: User can paste a TikTok URL into a web form and start a fact-checking job.
 - [x] **UI-02**: User can view a report page with extracted claims, labels, evidence, citations, screenshots, and uncertainty notes.
-- [ ] **UI-03**: User can browse the Markdown knowledge base through an Obsidian-like web UI.
-- [ ] **UI-04**: User can search stored notes, papers, claims, and reports through a vector-backed search UI.
-- [ ] **UI-05**: User can inspect graph relationships between creators, claims, papers, authors, sources, and evidence.
+- [x] **UI-03**: User can browse the Markdown knowledge base through an Obsidian-like web UI.
+- [x] **UI-04**: User can search stored notes, papers, claims, and reports through a vector-backed search UI.
+- [x] **UI-05**: User can inspect graph relationships between creators, claims, papers, authors, sources, and evidence.
 
 ### Ratings
 
-- [ ] **RAT-01**: System can create transparent rating records for creators, papers, authors, and sources based on accumulated evidence history.
-- [ ] **RAT-02**: Each rating record shows the evidence count, label distribution, source basis, and confidence level.
-- [ ] **RAT-03**: Early ratings are marked experimental until enough evidence history exists.
+- [x] **RAT-01**: System can create transparent rating records for creators, papers, authors, and sources based on accumulated evidence history.
+- [x] **RAT-02**: Each rating record shows the evidence count, label distribution, source basis, and confidence level.
+- [x] **RAT-03**: Early ratings are marked experimental until enough evidence history exists.
 
 ### Operations and Safety
 
@@ -148,15 +148,15 @@ Explicitly excluded. Documented to prevent scope creep.
 | KB-03 | Phase 1 | Complete |
 | KB-04 | Phase 1 | Complete |
 | KB-05 | Phase 1 | Complete |
-| KB-06 | Phase 5 | Pending |
+| KB-06 | Phase 5 | Complete |
 | UI-01 | Phase 2 | Complete |
 | UI-02 | Phase 4 | Complete |
-| UI-03 | Phase 5 | Pending |
-| UI-04 | Phase 5 | Pending |
-| UI-05 | Phase 5 | Pending |
-| RAT-01 | Phase 5 | Pending |
-| RAT-02 | Phase 5 | Pending |
-| RAT-03 | Phase 5 | Pending |
+| UI-03 | Phase 5 | Complete |
+| UI-04 | Phase 5 | Complete |
+| UI-05 | Phase 5 | Complete |
+| RAT-01 | Phase 5 | Complete |
+| RAT-02 | Phase 5 | Complete |
+| RAT-03 | Phase 5 | Complete |
 | OPS-01 | Phase 1 | Complete |
 | OPS-02 | Phase 1 | Complete |
 | OPS-03 | Phase 1 | Complete |
@@ -169,4 +169,4 @@ Explicitly excluded. Documented to prevent scope creep.
 
 ---
 *Requirements defined: 2026-04-18*
-*Last updated: 2026-04-18 after Phase 4 verification*
+*Last updated: 2026-04-18 after Phase 5 verification*
