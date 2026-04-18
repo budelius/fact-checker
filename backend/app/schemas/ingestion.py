@@ -124,6 +124,7 @@ class ResearchBasisCandidate(BaseModel):
     candidate_type: str
     value: str
     source: str
+    source_uuid: UUID | None = None
     confidence: float | None = None
 
 
