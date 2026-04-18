@@ -110,9 +110,9 @@ Do not introduce a new palette in Phase 2. If a warning color is needed for "nee
 | Element | Copy |
 |---------|------|
 | Primary CTA | Extract claims |
-| Empty state heading | Paste a public TikTok URL |
-| Empty state body | Start with a public video link to create a job, retrieve transcript context, capture source-clue frames, and extract timestamped claims. |
-| Error state | This TikTok could not be processed. Check that the link is public, try another URL, or use the pasted-transcript fallback. |
+| Empty state heading | Paste a public TikTok URL or upload a video |
+| Empty state body | Start with a public video link or a user-owned video file to create a job, retrieve transcript context, capture source-clue frames, and extract timestamped claims. |
+| Error state | This video could not be processed. Check that the link is public, try another URL, upload another video, or use the pasted-transcript fallback. |
 | Destructive confirmation | none; Phase 2 must not add delete, purge, or destructive artifact actions |
 
 Additional required labels:
@@ -120,6 +120,9 @@ Additional required labels:
 | Element | Copy |
 |---------|------|
 | URL field label | Public TikTok URL |
+| Video file label | Video file |
+| Upload CTA | Upload video |
+| Upload helper | MP4, MOV, or WebM video files are stored locally as owned raw artifacts. |
 | Job UUID label | Job UUID |
 | Lifecycle label | Status |
 | Current operation label | Current operation |
@@ -127,7 +130,8 @@ Additional required labels:
 | Screenshot empty state | No source-clue frames captured yet. |
 | Claims empty state | No claims extracted yet. |
 | Research-basis empty state | No paper or source references found in transcript or screenshots. Marked opinion-based for now. |
-| Unsupported URL recovery | Use a public TikTok URL or switch to pasted transcript for development. |
+| Unsupported URL recovery | Use a public TikTok URL, upload a video file, or switch to pasted transcript for development. |
+| Unsupported upload recovery | Use an MP4, MOV, or WebM file under the configured size limit. |
 | Complete state summary | Claims extracted and ready for paper discovery. |
 
 Do not use copy that implies truth evaluation in Phase 2. Avoid "verified", "supported", "contradicted", "true", or "false" in this phase except when explicitly describing later-phase evidence labels as not yet available.
@@ -149,12 +153,12 @@ Do not use copy that implies truth evaluation in Phase 2. Avoid "verified", "sup
 
 | State | Required UI |
 |-------|-------------|
-| Empty | URL input, primary `Extract claims` button, secondary development fallback entry point for pasted transcript or fixture ingestion. |
-| Submitting | Disable duplicate submit for the same URL, keep the URL visible, show job creation in progress, and reserve space for the job UUID. |
+| Empty | URL input, local video upload control, primary `Extract claims` button for URL ingestion, `Upload video` action for file ingestion, and secondary development fallback entry point for pasted transcript or fixture ingestion. |
+| Submitting | Disable duplicate submit for the same URL or selected file, keep the URL/file name visible, show job creation in progress, and reserve space for the job UUID. |
 | Job created | Show the job UUID in mono text with a copy-icon button and visible lifecycle status. |
 | Running | Show the progress timeline, current operation, artifact statuses, and any retrieved metadata as soon as available. |
 | Complete | Keep progress visible with all completed/skipped states, show transcript/media/claim artifacts, and show research-basis triage. |
-| Failed | Keep the failed step visible, show recoverable error copy, preserve the entered URL, and provide `Try another URL` plus pasted-transcript fallback. |
+| Failed | Keep the failed step visible, show recoverable error copy, preserve the entered URL or selected file name, and provide `Try another URL`, `Upload another video`, plus pasted-transcript fallback. |
 
 The top-level job lifecycle must use the Phase 1 language: `pending`, `running`, `failed`, and `complete` or `succeeded`. If the backend returns `succeeded`, display `complete` in the UI while preserving raw status in job metadata.
 
@@ -164,10 +168,10 @@ Use a vertical timeline on desktop and a compact stacked list on mobile. Do not 
 
 | Step | Display Label | User-Facing Operation Examples | Terminal Artifact |
 |------|---------------|--------------------------------|-------------------|
-| 1 | Validate URL | Checking public TikTok URL | valid URL or unsupported URL error |
-| 2 | Read public metadata | Reading public page metadata and captions | video metadata, creator alias if available |
-| 3 | Build transcript | Loading captions or transcribing allowed media | transcript artifact with provenance |
-| 4 | Capture source clues | Capturing frames with paper titles, DOI/arXiv strings, URLs, slides, or article screenshots | screenshot/keyframe artifacts |
+| 1 | Validate URL or upload | Checking public TikTok URL or validating uploaded video | valid URL, stored upload artifact, or recoverable validation error |
+| 2 | Read public metadata | Reading public page metadata and captions; skipped for local upload when no public metadata exists | video metadata, creator alias if available |
+| 3 | Build transcript | Loading captions, using pasted transcript, or transcribing allowed media | transcript artifact with provenance |
+| 4 | Capture source clues | Capturing frames with paper titles, DOI/arXiv strings, URLs, slides, or article screenshots when media bytes are available | screenshot/keyframe artifacts |
 | 5 | Extract claims | Extracting atomic AI research claims from transcript context | claim artifacts |
 | 6 | Triage research basis | Looking for paper-like titles, DOI/arXiv IDs, URLs, named studies, and source references | research-basis status and candidate list |
 | 7 | Write owned artifacts | Writing normalized artifacts to the owned knowledge model | vault/MongoDB-ready artifact status |
@@ -182,7 +186,7 @@ Show a status grid or list for these artifacts in the main pane or right rail:
 |----------|------------------------|------------------|
 | Public metadata | pending, running, complete, failed | source URL, external video ID if known, creator alias if known |
 | Transcript | pending, running, complete, failed, unavailable | retrieval method, provider/source, segment count, quality note, failure reason |
-| Media retrieval | pending, running, complete, skipped, failed | compliance gate result, media artifact UUID if created |
+| Media retrieval | pending, running, complete, skipped, failed | compliance gate result, upload/storage result, media artifact UUID if created |
 | Screenshots/keyframes | pending, running, complete, skipped, failed | count, timestamps, vault asset paths, source-clue flags |
 | Claims | pending, running, complete, failed | count, extraction confidence summary, parse-failure state |
 | Research basis | pending, running, complete, needs_manual_review | source candidate count and basis classification |
@@ -243,7 +247,7 @@ Use `role="alert"` for blocking errors and `aria-live="polite"` for progress upd
 |-----------|---------|-------|
 | `AppShell` | Existing three-pane workbench shell | Extend, do not replace. |
 | `VaultNavigation` | Existing vault section navigation | Preserve current behavior unless a workspace switch is added. |
-| `TikTokSubmissionPanel` | URL form and fallback entry point | New Phase 2 component. |
+| `TikTokSubmissionPanel` | URL form, local video upload control, and fallback entry point | New Phase 2 component. |
 | `JobStatusHeader` | Job UUID, lifecycle status, current operation | New Phase 2 component. |
 | `ProgressTimeline` | Step-by-step backend operation visibility | New Phase 2 component. |
 | `ArtifactStatusGrid` | Transcript, metadata, media, screenshot, claim, and triage statuses | New Phase 2 component. |
@@ -260,6 +264,7 @@ No component may fetch TikTok-specific raw behavior directly. UI components cons
 ## Accessibility And Responsive Contract
 
 - URL submission must use a real `<form>` with a visible `Public TikTok URL` label.
+- Video upload must use a native file input or drop zone with a visible `Video file` label, accepted video types, visible selected filename, and no hidden-only upload control.
 - The primary CTA must be reachable by keyboard and submit on Enter when the URL field is focused.
 - Job status changes must be announced with `aria-live="polite"`.
 - Blocking errors must use `role="alert"`.

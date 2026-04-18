@@ -37,6 +37,7 @@ def health() -> dict[str, str]:
 - Keep routes thin: validate request DTOs, call ingestion services, return normalized job DTOs.
 - Required routes for Phase 2 planning:
   - `POST /ingestion/tiktok`
+  - `POST /ingestion/videos/upload`
   - `POST /ingestion/fixtures/transcript` or equivalent pasted-transcript/dev path
   - `GET /ingestion/jobs/{job_uuid}`
 
@@ -159,7 +160,7 @@ def expected_wiki_path(entity_type: str, slug: str) -> str:
 **Planning guidance**
 
 - Plan an early contract task for transcript and screenshot storage because `EntityType` includes `transcript` and `screenshot`, while `VAULT_WIKI_ENTITY_FOLDERS` omits transcript/screenshot folders.
-- Keep raw external inputs under `vault/raw/`; generated notes under `vault/wiki/`.
+- Keep raw external inputs under `vault/raw/`; generated notes under `vault/wiki/`. Uploaded user-owned videos belong under `vault/raw/videos/` with UUID/provenance metadata.
 - UUIDs belong in frontmatter, not filenames.
 
 ### Untrusted Input Boundary

@@ -6,7 +6,7 @@
 <domain>
 ## Phase Boundary
 
-Phase 2 lets a user submit a public TikTok URL from the web app, creates a visible job with useful progress, retrieves public metadata/transcript/media context through an ingestion adapter, captures representative screenshots/keyframes, and extracts timestamped atomic AI research claims. It also performs an early research-basis triage by extracting paper-like or source-like references from transcript and visual context.
+Phase 2 lets a user submit a public TikTok URL or upload a user-owned video file from the web app, creates a visible job with useful progress, retrieves or stores transcript/media context through an ingestion adapter, captures representative screenshots/keyframes when available, and extracts timestamped atomic AI research claims. It also performs an early research-basis triage by extracting paper-like or source-like references from transcript and visual context.
 
 This phase does not perform full paper discovery, paper downloading, evidence evaluation, creator ratings, author ratings, or graph browsing. Those belong to later phases. If Phase 2 cannot find research/source candidates in the video content, it should mark the video or claims as opinion-based/unratable for now rather than pretending evidence exists.
 
@@ -17,11 +17,11 @@ This phase does not perform full paper discovery, paper downloading, evidence ev
 
 ### Submission and Progress UX
 
-- **D-01:** The frontend should let the user paste a public TikTok URL, submit it, and receive a job UUID.
+- **D-01:** The frontend should let the user paste a public TikTok URL or upload a user-owned video file, submit it, and receive a job UUID.
 - **D-02:** The UI must show visible progress and what the backend is actually doing, not only a generic spinner.
 - **D-03:** Progress should expose both lifecycle status and current operation, such as validating URL, reading public page transcript, downloading media if allowed, transcribing, capturing screenshots, extracting claims, and checking for research/source references.
 - **D-04:** Use the Phase 1 job status language (`pending`, `running`, `failed`, `complete`/`succeeded`) while allowing more detailed stage messages for user-facing progress.
-- **D-05:** Failed ingestion and unsupported URLs should produce clear, recoverable states so the user can try another URL or use the fixture/pasted-transcript path.
+- **D-05:** Failed ingestion, unsupported URLs, and invalid video uploads should produce clear, recoverable states so the user can try another URL, upload another video, or use the fixture/pasted-transcript path.
 
 ### TikTok Adapter and Transcript Retrieval
 
@@ -52,6 +52,13 @@ This phase does not perform full paper discovery, paper downloading, evidence ev
 - **D-21:** Extract candidate source references alongside claims: paper-like titles, DOI/arXiv identifiers, URLs, author names, named studies, news/article titles, or explicit "a paper says..." style references.
 - **D-22:** If no paper/source candidates can be found from transcript or screenshots, classify the video or claim set as opinion-based, not research-backed, or unratable for now.
 - **D-23:** A core value of this phase is to quickly answer whether a TikTok video appears research-based at all, before spending later pipeline effort on full evidence discovery.
+
+### Owned Video Upload
+
+- **D-24:** User-owned video upload is a first-class Phase 2 input path, not a replacement for TikTok URL ingestion and not merely a voice/transcript upload.
+- **D-25:** Uploaded videos are posted from the browser to this backend, stored as local raw artifacts under `vault/raw/videos/`, and represented with UUID/provenance metadata. They must not be uploaded to OpenAI or another third-party provider unless a later explicit provider setting enables that path.
+- **D-26:** Uploaded video jobs may include an optional pasted transcript during Phase 2. If no transcript or transcription provider is available, the job should still show the stored media artifact and mark transcript/claim extraction as unavailable or skipped with a clear reason.
+- **D-27:** Video uploads must validate file type, extension, and size before storage and expose recoverable error states for unsupported or oversized files.
 
 ### the agent's Discretion
 
@@ -128,6 +135,7 @@ This phase does not perform full paper discovery, paper downloading, evidence ev
 
 - The progress UI should show what the agent is actually doing at each stage.
 - Transcript retrieval should first try the public video page/captions, then try video download plus transcription if captions are unavailable.
+- The app should also accept a local video file upload so the user can process owned or manually downloaded videos without relying on TikTok download behavior.
 - The prior `stoz3n-chat-agent` project is a useful implementation reference for transcript and video-frame handling.
 - Screenshots should help the user remember the video and should preferentially capture visible paper/source clues.
 - If no paper/source references are found, the system should say the content appears opinion-based or cannot be rated for now.
