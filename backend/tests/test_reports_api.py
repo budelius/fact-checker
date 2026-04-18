@@ -10,10 +10,21 @@ from app.api.reports import (
     get_repository,
     get_vault_root,
 )
+from app.evaluation.evaluator import DeterministicEvaluator
+from app.evaluation.pipeline import EvaluationPipeline
 from app.ingestion.jobs import clear_jobs_for_tests, save_job
 from app.main import app
 from app.schemas.evaluation import EvaluationJob, ReportVersion
-from app.schemas.ground_truth import GroundTruthJob
+from app.schemas.ground_truth import (
+    CandidateKind,
+    CandidateStatus,
+    GroundTruthJob,
+    PaperCandidate,
+    PaperChunk,
+    PaperMetadata,
+    PaperSummary,
+    SourceDecision,
+)
 from app.schemas.ingestion import JobLifecycleStatus
 from app.settings import get_settings
 
@@ -56,6 +67,18 @@ class FakePipeline:
             report=report,
             report_versions=[*(previous_versions or []), report],
         )
+
+
+class FakeRepository:
+    def __init__(self) -> None:
+        self.entities = []
+        self.relationships = []
+
+    def upsert_entity(self, entity) -> None:
+        self.entities.append(entity)
+
+    def upsert_relationship(self, relationship) -> None:
+        self.relationships.append(relationship)
 
 
 def _override_dependencies(tmp_path):
@@ -138,3 +161,136 @@ def test_rerun_creates_new_report_version(tmp_path):
     assert first["report"]["version"] == 1
     assert second["report"]["version"] == 2
     assert first["report"]["report_uuid"] != second["report"]["report_uuid"]
+
+
+def test_api_e2e_generates_report_for_two_claims_with_citations(monkeypatch, tmp_path):
+    monkeypatch.setenv("MONGODB_URI", "mongodb://example")
+    monkeypatch.setenv("MONGODB_DATABASE", "fact_checker")
+    monkeypatch.setenv("QDRANT_URL", "http://localhost:6333")
+    monkeypatch.setenv("QDRANT_COLLECTION_KNOWLEDGE", "fact_checker_knowledge")
+    monkeypatch.setenv("VAULT_ROOT", str(tmp_path / "vault"))
+    monkeypatch.setenv("LOG_LEVEL", "INFO")
+    settings = get_settings()
+    repository = FakeRepository()
+    app.dependency_overrides[get_evaluation_pipeline] = lambda: EvaluationPipeline(
+        settings=settings,
+        evaluator=DeterministicEvaluator(),
+    )
+    app.dependency_overrides[get_repository] = lambda: repository
+    app.dependency_overrides[get_qdrant_repository] = lambda: None
+    app.dependency_overrides[get_vault_root] = lambda: tmp_path / "vault"
+
+    ingestion_job_uuid = uuid4()
+    video_uuid = uuid4()
+    transcript_uuid = uuid4()
+    first_claim_uuid = uuid4()
+    second_claim_uuid = uuid4()
+    save_job(
+        {
+            "job_uuid": str(ingestion_job_uuid),
+            "claims": [
+                {
+                    "uuid": str(first_claim_uuid),
+                    "source_video_uuid": str(video_uuid),
+                    "source_transcript_uuid": str(transcript_uuid),
+                    "transcript_excerpt": "Transformers parallelize sequence modeling.",
+                    "claim_text": "Transformers parallelize sequence modeling.",
+                    "screenshot_uuids": [],
+                    "evidence_status": "pending",
+                    "source_candidate_count": 1,
+                },
+                {
+                    "uuid": str(second_claim_uuid),
+                    "source_video_uuid": str(video_uuid),
+                    "source_transcript_uuid": str(transcript_uuid),
+                    "transcript_excerpt": "The source is a preprint.",
+                    "claim_text": "The source is a preprint.",
+                    "screenshot_uuids": [],
+                    "evidence_status": "pending",
+                    "source_candidate_count": 1,
+                },
+            ],
+        }
+    )
+    paper_uuid = uuid4()
+    supplemental_uuid = uuid4()
+    ground_truth = GroundTruthJob(
+        ingestion_job_uuid=ingestion_job_uuid,
+        status=JobLifecycleStatus.succeeded,
+        candidates=[
+            PaperCandidate(
+                uuid=paper_uuid,
+                title="Attention Is All You Need",
+                kind=CandidateKind.preprint,
+                status=CandidateStatus.selected_ground_truth,
+                source_url="https://arxiv.org/abs/1706.03762",
+            ),
+            PaperCandidate(
+                uuid=supplemental_uuid,
+                title="Attention blog",
+                kind=CandidateKind.non_paper,
+                status=CandidateStatus.supplemental,
+                source_url="https://example.com/blog",
+            ),
+        ],
+        decisions=[
+            SourceDecision(
+                claim_uuid=first_claim_uuid,
+                candidate_uuid=paper_uuid,
+                status=CandidateStatus.selected_ground_truth,
+                reason="selected",
+            ),
+            SourceDecision(
+                claim_uuid=second_claim_uuid,
+                candidate_uuid=paper_uuid,
+                status=CandidateStatus.selected_ground_truth,
+                reason="selected",
+            ),
+            SourceDecision(
+                claim_uuid=first_claim_uuid,
+                candidate_uuid=supplemental_uuid,
+                status=CandidateStatus.supplemental,
+                reason="unused candidate",
+            ),
+        ],
+        papers=[
+            PaperMetadata(
+                uuid=paper_uuid,
+                title="Attention Is All You Need",
+                publication_status="preprint",
+                source_links=["https://arxiv.org/abs/1706.03762"],
+            )
+        ],
+        chunks=[
+            PaperChunk(
+                paper_uuid=paper_uuid,
+                source_uuid=paper_uuid,
+                chunk_id="chunk-1",
+                text="The Transformer allows significantly more parallelization.",
+                vault_path="vault/wiki/papers/attention.md",
+                source_url="https://arxiv.org/abs/1706.03762",
+            )
+        ],
+        summaries=[
+            PaperSummary(
+                paper_uuid=paper_uuid,
+                summary_markdown="Generated summary that must not be cited.",
+            )
+        ],
+    )
+    serialize_ground_truth_job(ground_truth)
+
+    response = client.post(f"/reports/jobs/from-ground-truth/{ground_truth.job_uuid}")
+
+    assert response.status_code == 200
+    payload = response.json()
+    report = payload["report"]
+    assert len(report["evaluations"]) == 2
+    assert report["version"] == 1
+    assert report["markdown_path"].startswith("vault/wiki/reports/")
+    assert report["label_counts"]["supported"] == 2
+    assert report["cited_evidence"]
+    assert report["unused_candidate_evidence"]
+    assert all(evaluation["citations"][0]["source_url"] for evaluation in report["evaluations"])
+    assert "Generated summary that must not be cited" not in str(report)
+    assert (tmp_path / "vault" / "wiki" / "reports").exists()
