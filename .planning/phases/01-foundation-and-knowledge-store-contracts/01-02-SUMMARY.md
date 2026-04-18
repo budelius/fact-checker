@@ -66,6 +66,7 @@ completed: 2026-04-18
 1. **Task 1: Create FastAPI backend project skeleton** - `67def50`
 2. **Task 2: Define canonical entity and relationship schemas** - `2fb80c7`
 3. **Task 3: Add datastore repositories and untrusted-input guardrails** - `fe2f5a4`
+4. **Review fix: Support root or backend `.env` lookup** - `ea26074`
 
 ## Files Created/Modified
 
@@ -88,7 +89,19 @@ completed: 2026-04-18
 
 ## Deviations from Plan
 
-None - plan executed exactly as written.
+### Auto-fixed Issues
+
+**1. [Rule 2 - Missing Critical] Backend settings only loaded `../.env`**
+- **Found during:** Code review gate
+- **Issue:** `Settings` could load the root `.env` when running from `backend/`, but not when running backend tooling from the repository root.
+- **Fix:** Changed `SettingsConfigDict` to check both `.env` and `../.env`.
+- **Files modified:** `backend/app/settings.py`
+- **Verification:** `python3 -m compileall -q backend/app backend/tests`
+- **Committed in:** `ea26074`
+
+---
+
+**Total deviations:** 1 auto-fixed (missing critical). **Impact on plan:** Improves local developer reliability without changing public contracts.
 
 ## Issues Encountered
 
