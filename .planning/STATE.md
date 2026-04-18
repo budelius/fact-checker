@@ -13,13 +13,15 @@ See: .planning/PROJECT.md (updated 2026-04-18)
 - Requirements defined: 41 v1 requirements
 - Roadmap defined: 5 phases
 - Current phase: Phase 1
-- Phase status: Not started
+- Phase status: Ready to execute
+- Phase 1 planned: 2026-04-18
+- Phase 1 plan count: 5 plans in 2 waves
 
 ## Active Roadmap
 
 | Phase | Status | Progress |
 |-------|--------|----------|
-| 1 - Foundation and Knowledge Store Contracts | Pending | 0% |
+| 1 - Foundation and Knowledge Store Contracts | Ready to execute | Planned |
 | 2 - TikTok Ingestion and Claim Extraction | Pending | 0% |
 | 3 - Ground-Truth Discovery and Paper Processing | Pending | 0% |
 | 4 - Evidence Evaluation and Fact-Check Reports | Pending | 0% |
@@ -27,13 +29,13 @@ See: .planning/PROJECT.md (updated 2026-04-18)
 
 ## Next Command
 
-`$gsd-discuss-phase 1`
+`$gsd-execute-phase 1`
 
 Alternative:
 
-`$gsd-ui-phase 1`
+`cat .planning/phases/01-foundation-and-knowledge-store-contracts/*-PLAN.md`
 
-Use the UI phase first if the frontend shell, Markdown browser conventions, or graph/search interaction design should be specified before planning implementation.
+Review the five Phase 1 plans before execution if desired.
 
 ---
 *State initialized: 2026-04-18*
