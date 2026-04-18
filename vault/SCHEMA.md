@@ -41,6 +41,7 @@ Required wiki folders:
 - `vault/wiki/sources/`
 - `vault/wiki/evidence/`
 - `vault/wiki/reports/`
+- `vault/wiki/ratings/`
 - `vault/wiki/topics/`
 
 Required raw artifact folders:
