@@ -92,6 +92,8 @@
 
 ### Phase 4: Evidence Evaluation and Fact-Check Reports
 
+**Status:** Planned (2026-04-18)
+
 **Goal:** Compare each video claim against stored source evidence and produce cited, uncertainty-aware fact-check reports.
 
 **Requirements:** EVAL-01, EVAL-02, EVAL-03, EVAL-04, EVAL-05, UI-02

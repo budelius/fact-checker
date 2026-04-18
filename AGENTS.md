@@ -20,7 +20,7 @@ Before planning or implementing a phase, read the project context, requirements,
 
 ## Current Focus
 
-Phase 4: Evidence Evaluation and Fact-Check Reports is ready to discuss and plan.
+Phase 4: Evidence Evaluation and Fact-Check Reports is planned and ready to execute.
 
 Goal: compare each extracted video claim against selected Phase 3 paper evidence and produce cited, uncertainty-aware fact-check reports without unsupported labels.
 
@@ -70,8 +70,8 @@ Goal: compare each extracted video claim against selected Phase 3 paper evidence
 
 Run:
 
-`$gsd-discuss-phase 4`
+`$gsd-execute-phase 4`
 
-For frontend interaction design before planning Phase 4, run:
+For a planning review before execution, run:
 
-`$gsd-ui-phase 4`
+`$gsd-review --phase 4 --all`
