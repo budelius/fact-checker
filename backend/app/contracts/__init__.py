@@ -1,0 +1,1 @@
+"""Cross-store contract helpers."""
