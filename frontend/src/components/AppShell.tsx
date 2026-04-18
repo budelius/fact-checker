@@ -2,8 +2,8 @@ import { useState } from "react";
 import { BookOpenText } from "lucide-react";
 
 import { sampleNote, vaultSections, type VaultSectionName } from "../data/sampleVault";
+import { IngestionWorkbench } from "./IngestionWorkbench";
 import { MetadataPanel } from "./MetadataPanel";
-import { NotePreview } from "./NotePreview";
 import { VaultNavigation } from "./VaultNavigation";
 
 export function AppShell() {
@@ -16,7 +16,7 @@ export function AppShell() {
           <BookOpenText aria-hidden="true" size={22} />
           <span>Fact Checker</span>
         </div>
-        <div className="topbar__section">Knowledge Vault</div>
+        <div className="topbar__section">TikTok ingestion</div>
         <button className="topbar__button" type="button">
           Browse vault
         </button>
@@ -31,7 +31,7 @@ export function AppShell() {
       </aside>
 
       <main className="main-pane">
-        <NotePreview activeSection={activeSection} note={sampleNote} />
+        <IngestionWorkbench />
       </main>
 
       <aside className="right-rail" aria-label="Note metadata">
