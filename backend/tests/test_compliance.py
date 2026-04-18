@@ -9,6 +9,7 @@ def _base_env(monkeypatch):
     monkeypatch.setenv("QDRANT_COLLECTION_KNOWLEDGE", "fact_checker_knowledge")
     monkeypatch.setenv("VAULT_ROOT", "../vault")
     monkeypatch.setenv("LOG_LEVEL", "INFO")
+    monkeypatch.setenv("TIKTOK_MEDIA_DOWNLOAD_ENABLED", "false")
 
 
 def test_media_download_default_denied(monkeypatch):
