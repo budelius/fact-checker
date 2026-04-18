@@ -2,8 +2,8 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 05 complete
-last_updated: "2026-04-18T16:45:00.000Z"
+status: v1.0 milestone archived
+last_updated: "2026-04-18T18:30:00.000Z"
 progress:
   total_phases: 5
   completed_phases: 5
@@ -19,7 +19,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-18)
 
 **Core value:** Save time verifying AI research claims while keeping the accumulated evidence and knowledge graph owned by the user or company.
-**Current focus:** v1 knowledge browser/search/graph/ratings complete
+**Current focus:** Planning next milestone
 
 ## Current Status
 
@@ -54,6 +54,7 @@ See: .planning/PROJECT.md (updated 2026-04-18)
 - Phase 5 planned: 2026-04-18
 - Phase 5 plan count: 6 plans in 4 waves
 - Phase 5 completed: 2026-04-18
+- v1.0 MVP archived: 2026-04-18
 
 ## Active Roadmap
 
@@ -67,13 +68,13 @@ See: .planning/PROJECT.md (updated 2026-04-18)
 
 ## Next Command
 
-`$gsd-complete-milestone`
+`$gsd-new-milestone`
 
 Alternative:
 
-`$gsd-verify-work`
+`$gsd-cleanup`
 
-Phase 5 completed the Notion-like page-first vault browser, command-palette search, graph inspection, consistency checks, annotations, and evidence-state rating badges. Backend targeted tests, full backend tests, frontend build, and rating-copy safety checks passed.
+v1.0 MVP is archived in `.planning/milestones/`. Phase directories remain in `.planning/phases/` as raw execution history.
 
 ## Resume File
 

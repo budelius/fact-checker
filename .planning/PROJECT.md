@@ -1,8 +1,26 @@
 # Fact Checker
 
+## Current State
+
+**Shipped version:** v1.0 MVP on 2026-04-18
+**Status:** End-to-end local MVP complete.
+
+Fact Checker v1.0 can take TikTok-oriented inputs, extract timestamped AI research claims, discover relevant papers or preprints, process source evidence, generate cited fact-check reports, and expose the resulting owned knowledge through a web vault browser with search, graph inspection, consistency checks, annotations, and evidence-state ratings.
+
+## Next Milestone Goals
+
+Fresh requirements have not been defined yet. Start the next cycle with `$gsd-new-milestone`.
+
+Candidate directions to consider:
+
+- Harden deployment, authentication, and multi-user ownership boundaries.
+- Improve live ingestion compliance and provider reliability.
+- Expand reindex/rerun workflows and consistency repair tooling.
+- Add organization-specific source policies or alternative providers.
+
 ## What This Is
 
-Fact Checker is a user-owned fact-checking system for AI research claims in public TikTok videos. A user pastes a video link into a website, the backend extracts the transcript and video context, finds relevant papers or preprints, and produces an evidence-backed report plus a growing Markdown knowledge base.
+Fact Checker is a user-owned fact-checking system for AI research claims in public TikTok videos. A user pastes a video link into a website, the backend extracts the transcript and video context, finds relevant papers or preprints, produces an evidence-backed report, and stores the result in a growing Markdown knowledge base with vector and graph indexes.
 
 The product is not just a one-off checker. The durable output is a **personal research brain** — a human-readable knowledge graph the user owns. Every check writes into it: Markdown notes, vector search, and MongoDB-backed graph relationships connect videos, creators, claims, papers, authors, sources, and evidence, so future checks become faster and more accurate. Because the graph is human-readable it is inspectable, and because it is connected it becomes a second signal for fact-checking — contradictions that span the brain catch what a single paper cannot. Like Notion, but self-owned, extensible, and it fact-checks itself.
 
@@ -15,20 +33,16 @@ Own the knowledge, not just the verdict. Fact Checker saves time verifying AI re
 ### Validated
 
 - [x] Phase 1 foundation contracts: monorepo structure, MongoDB/Qdrant local datastore contracts, UUID schemas, Markdown vault schema/templates, static knowledge-browser shell, and safety boundaries.
+- ✓ Public TikTok URL and local upload submission workflow with visible job status — v1.0
+- ✓ Transcript, screenshot/keyframe, and timestamped claim extraction artifacts — v1.0
+- ✓ Paper/preprint discovery, dedupe, source selection/rejection, lawful PDF acquisition, parsing, summaries, and Qdrant indexing — v1.0
+- ✓ Evidence evaluation with supported, contradicted, mixed, and insufficient labels plus cited Markdown fact-check reports — v1.0
+- ✓ Markdown canonical knowledge store with MongoDB entities/relationships and Qdrant vector payloads — v1.0
+- ✓ Page-first knowledge browser, command-palette search, graph inspection, consistency checks, annotations, and evidence-state ratings — v1.0
 
 ### Active
 
-- [ ] User can paste a public TikTok video URL into a website and start a fact-checking job.
-- [ ] System can retrieve or generate a transcript and capture video context for the submitted TikTok video.
-- [ ] System can extract concrete AI research claims from the transcript and video context.
-- [ ] System can search for relevant ground-truth sources, limited in v1 to research papers and preprints.
-- [ ] System can download or link source papers when available and summarize them as Markdown with citations, authors, and references.
-- [ ] System can compare extracted claims against evidence and label each claim as supported, contradicted, mixed, or insufficient evidence.
-- [ ] System can create a Markdown knowledge base with notes for videos, creators, claims, papers, authors, sources, and fact-check reports.
-- [ ] System can index the knowledge base and source chunks in Qdrant for vector search.
-- [ ] System can store entities and relationships in MongoDB for source, author, paper, creator, claim, and evidence relationships.
-- [ ] System can expose an Obsidian-like web UI for browsing Markdown notes, search results, graph relationships, and fact-check reports.
-- [ ] System can generate transparent initial ratings for creators, papers, authors, and sources based on accumulated evidence history.
+- [ ] Define next milestone requirements.
 
 ### Out of Scope
 
@@ -41,7 +55,7 @@ Own the knowledge, not just the verdict. Fact Checker saves time verifying AI re
 
 ## Context
 
-The narrow first use case is AI research fact checking for public TikTok videos. The target workflow is:
+The v1.0 MVP implements the narrow first use case: AI research fact checking for public TikTok videos and local/user-owned video fixtures. The target workflow is:
 
 1. User pastes a public TikTok link into a website.
 2. Backend retrieves the public video and metadata through a compliant ingestion adapter.
@@ -52,6 +66,13 @@ The narrow first use case is AI research fact checking for public TikTok videos.
 7. Backend compares claims against evidence and produces claim-level labels.
 8. Backend writes Markdown notes, MongoDB structured records/relationships, and vector index records.
 9. User browses the report, Markdown knowledge base, search, and graph relationships in the web UI.
+
+Current codebase state after v1.0:
+
+- Backend: FastAPI with Pydantic contracts, MongoDB repository boundary, Qdrant repository boundary, ingestion, ground-truth discovery, evaluation/reporting, and knowledge browser APIs.
+- Frontend: React/Vite/Yarn workspace with ingestion workbench, report page, page-first knowledge browser, command palette, graph/consistency panels, annotations, and rating badges.
+- Durable knowledge: Markdown under `vault/wiki/`, raw inputs under `vault/raw/`, MongoDB entities/relationships/annotations, and Qdrant payloads traceable to UUIDs and vault paths.
+- Verification at close: 183 backend tests passed, frontend production build passed, and Phase 5 rating-copy safety grep passed.
 
 Why this needs to exist:
 
@@ -87,16 +108,17 @@ Known terms:
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| v1 is an end-to-end thin slice | The project needs to prove the full loop from video link to evidence-backed knowledge base, even if each part starts basic. | - Pending |
-| v1 ground truth is papers and preprints | AI research claims are best checked against papers and arXiv-style preprints before adding news or commentary. | - Pending |
-| v1 uses evidence labels | Supported, contradicted, mixed, and insufficient evidence expose uncertainty better than a binary true/false verdict. | - Pending |
-| v1 UI is website plus Markdown browser | URL submission plus knowledge browsing validates the main workflow and the owned-memory value proposition. | - Pending |
-| v1 input is public TikTok links | TikTok is the narrow creator-platform target; Instagram is deferred. | - Pending |
+| v1 is an end-to-end thin slice | The project needs to prove the full loop from video link to evidence-backed knowledge base, even if each part starts basic. | Validated in v1.0 |
+| v1 ground truth is papers and preprints | AI research claims are best checked against papers and arXiv-style preprints before adding news or commentary. | Validated in v1.0 |
+| v1 uses evidence labels | Supported, contradicted, mixed, and insufficient evidence expose uncertainty better than a binary true/false verdict. | Validated in v1.0 |
+| v1 UI is website plus Markdown browser | URL submission plus knowledge browsing validates the main workflow and the owned-memory value proposition. | Validated in v1.0 |
+| v1 input is public TikTok links | TikTok is the narrow creator-platform target; Instagram is deferred. | Validated in v1.0 |
 | Markdown is the canonical knowledge surface | Markdown keeps the corpus portable, inspectable, and compatible with Obsidian-like workflows. | Validated in Phase 1 |
 | MongoDB replaces Postgres and Neo4j | One document database keeps operational records, entity metadata, rating snapshots, and graph relationships together for the MVP, reducing local infrastructure and schema coordination. | Validated in Phase 1 |
 | Qdrant is the vector database target | Qdrant fits filtered and hybrid retrieval for source chunks, claims, and notes. | Validated in Phase 1 |
-| The personal brain is the primary artifact | Framing the knowledge graph as the product (not as a side effect of reports) shapes storage, UI, and evaluation priorities — reports are views into the brain, not the other way around. | - Pending |
-| Graph topology is a second signal for truth | Beyond paper-level citations, cross-entity graph relationships must be usable as evidence surface — contradictions and corroborations across the brain feed back into claim evaluation and rating confidence. | - Pending |
+| The personal brain is the primary artifact | Framing the knowledge graph as the product (not as a side effect of reports) shapes storage, UI, and evaluation priorities — reports are views into the brain, not the other way around. | Validated in v1.0 |
+| Graph topology is a second signal for truth | Beyond paper-level citations, cross-entity graph relationships must be usable as evidence surface — contradictions and corroborations across the brain feed back into claim evaluation and rating confidence. | Initial browser/graph surface validated in v1.0 |
+| Ratings use evidence-state badges | Badge language avoids hidden trust or reputation scoring while exposing evidence count, label distribution, source basis, and confidence. | Validated in v1.0 |
 
 ## Evolution
 
@@ -116,4 +138,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-18 — Phase 1 verification; framing refined to put "personal brain" and graph-topology-as-second-signal in Core Value, Context, and Key Decisions.*
+*Last updated: 2026-04-18 after v1.0 milestone*
