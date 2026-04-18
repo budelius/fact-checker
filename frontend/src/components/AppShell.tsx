@@ -1,4 +1,4 @@
-import { BookOpenText, Search } from "lucide-react";
+import { BookOpenText, FileVideo, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import {
@@ -22,14 +22,21 @@ import {
   type VaultSection,
   type VaultSectionName,
 } from "../data/sampleVault";
+import type { ReportVersion } from "../api/reports";
 import { CommandPalette } from "./CommandPalette";
+import { IngestionWorkbench } from "./IngestionWorkbench";
 import { MetadataPanel } from "./MetadataPanel";
 import { NotePreview } from "./NotePreview";
+import { ReportProvenancePanel } from "./reports/ReportProvenancePanel";
 import { VaultNavigation } from "./VaultNavigation";
+
+type WorkspaceMode = "ingestion" | "vault";
 
 export function AppShell() {
   const [sections, setSections] = useState<VaultSection[]>(vaultSections);
   const [activeSection, setActiveSection] = useState<VaultSectionName>("Papers");
+  const [activeWorkspace, setActiveWorkspace] = useState<WorkspaceMode>("ingestion");
+  const [activeReport, setActiveReport] = useState<ReportVersion | null>(null);
   const [selectedNote, setSelectedNote] = useState<KnowledgeNoteDetail | null>(sampleNote);
   const [graph, setGraph] = useState(sampleGraph);
   const [consistency, setConsistency] = useState(sampleConsistency);
@@ -154,6 +161,8 @@ export function AppShell() {
           annotations: [],
         }),
       );
+    setActiveWorkspace("vault");
+    setActiveReport(null);
     setPaletteOpen(false);
   }
 
@@ -193,6 +202,21 @@ export function AppShell() {
     fetchKnowledgeConsistency().then(setConsistency).catch(() => undefined);
   }
 
+  function openVaultSection(section: VaultSectionName) {
+    setActiveSection(section);
+    setActiveWorkspace("vault");
+    setActiveReport(null);
+  }
+
+  const topbarSection =
+    activeReport
+      ? "Fact-check report"
+      : activeWorkspace === "ingestion"
+        ? "Video ingestion"
+        : loading
+          ? "Loading vault page"
+          : "Knowledge vault";
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -200,40 +224,61 @@ export function AppShell() {
           <BookOpenText aria-hidden="true" size={22} />
           <span>Fact Checker</span>
         </div>
-        <div className="topbar__section">{loading ? "Loading vault page" : "Knowledge vault"}</div>
-        <button className="topbar__button" onClick={() => setPaletteOpen(true)} type="button">
-          <Search aria-hidden="true" size={16} />
-          Search
-        </button>
+        <div className="topbar__section">{topbarSection}</div>
+        <div className="topbar__actions">
+          <button
+            className="topbar__button topbar__button--secondary"
+            onClick={() => {
+              setActiveWorkspace(activeWorkspace === "ingestion" ? "vault" : "ingestion");
+              setActiveReport(null);
+            }}
+            type="button"
+          >
+            <FileVideo aria-hidden="true" size={16} />
+            {activeWorkspace === "ingestion" ? "Browse vault" : "Check video"}
+          </button>
+          <button className="topbar__button" onClick={() => setPaletteOpen(true)} type="button">
+            <Search aria-hidden="true" size={16} />
+            Search
+          </button>
+        </div>
       </header>
 
       <aside className="left-rail" aria-label="Knowledge Vault">
         <VaultNavigation
           activeSection={activeSection}
-          onSectionChange={setActiveSection}
+          onSectionChange={openVaultSection}
           sections={sections}
         />
       </aside>
 
       <main className="main-pane">
-        <NotePreview
-          consistency={consistency}
-          graph={graph}
-          note={selectedNote}
-          onCheckConsistency={checkConsistency}
-          rating={rating}
-        />
+        {activeWorkspace === "ingestion" ? (
+          <IngestionWorkbench onReportChange={setActiveReport} />
+        ) : (
+          <NotePreview
+            consistency={consistency}
+            graph={graph}
+            note={selectedNote}
+            onCheckConsistency={checkConsistency}
+            rating={rating}
+          />
+        )}
       </main>
 
-      <aside className="right-rail" aria-label="Note metadata">
-        <MetadataPanel
-          consistency={consistency}
-          graph={graph}
-          note={selectedNote}
-          onAddAnnotation={addAnnotation}
-          onCheckConsistency={checkConsistency}
-          rating={rating}
-        />
+      <aside className="right-rail" aria-label={activeReport ? "Report provenance" : "Note metadata"}>
+        {activeReport ? (
+          <ReportProvenancePanel report={activeReport} />
+        ) : activeWorkspace === "vault" ? (
+          <MetadataPanel
+            consistency={consistency}
+            graph={graph}
+            note={selectedNote}
+            onAddAnnotation={addAnnotation}
+            onCheckConsistency={checkConsistency}
+            rating={rating}
+          />
+        ) : null}
       </aside>
 
       <CommandPalette

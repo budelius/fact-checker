@@ -70,14 +70,32 @@ button {
 }
 
 .topbar__button {
+  align-items: center;
   background: var(--color-accent);
   border: 1px solid var(--color-accent);
   border-radius: 8px;
   color: var(--color-surface);
   cursor: pointer;
+  display: inline-flex;
+  gap: var(--space-sm);
+  justify-content: center;
   min-height: 36px;
   padding: var(--space-sm) var(--space-md);
   white-space: nowrap;
+}
+
+.topbar__actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  justify-content: flex-end;
+}
+
+.topbar__button--secondary {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-ink);
 }
 
 .topbar__button:focus-visible,
