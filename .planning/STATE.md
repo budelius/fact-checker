@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: phase_5_ui_spec_approved
-last_updated: "2026-04-18T15:28:21.826Z"
+status: phase_5_planned
+last_updated: "2026-04-18T15:44:28Z"
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 23
+  total_plans: 29
   completed_plans: 23
   percent: 80
 ---
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-04-18)
 - Requirements defined: 41 v1 requirements
 - Roadmap defined: 5 phases
 - Current phase: Phase 5
-- Phase status: UI-SPEC approved, ready to plan
+- Phase status: Planned, ready to execute
 - Phase 1 planned: 2026-04-18
 - Phase 1 plan count: 5 plans in 2 waves
 - Phase 1 completed: 2026-04-18
@@ -50,6 +50,9 @@ See: .planning/PROJECT.md (updated 2026-04-18)
 - Phase 4 completed: 2026-04-18
 - Phase 5 context gathered: 2026-04-18
 - Phase 5 UI-SPEC approved: 2026-04-18
+- Phase 5 researched: 2026-04-18
+- Phase 5 planned: 2026-04-18
+- Phase 5 plan count: 6 plans in 4 waves
 
 ## Active Roadmap
 
@@ -59,21 +62,21 @@ See: .planning/PROJECT.md (updated 2026-04-18)
 | 2 - TikTok Ingestion and Claim Extraction | Complete | Verified |
 | 3 - Ground-Truth Discovery and Paper Processing | Complete | Verified |
 | 4 - Evidence Evaluation and Fact-Check Reports | Complete | Verified |
-| 5 - Knowledge Browser, Search, Graph, and Ratings | Pending | UI-SPEC approved |
+| 5 - Knowledge Browser, Search, Graph, and Ratings | Ready to execute | 6 plans in 4 waves |
 
 ## Next Command
 
-`$gsd-plan-phase 5`
+`$gsd-execute-phase 5`
 
 Alternative:
 
-`$gsd-plan-phase 5 --skip-research`
+`cat .planning/phases/05-knowledge-browser-search-graph-and-ratings/*-PLAN.md`
 
-Phase 5 context and UI-SPEC are gathered. The next step should plan the Notion-like page-first vault browser, command-palette search, Graphify-inspired graph inspection, consistency checks, annotations, and evidence-state rating badges.
+Phase 5 has research, pattern map, six executable plans, and an inline plan check. The next step should execute the Notion-like page-first vault browser, command-palette search, Graphify-inspired graph inspection, consistency checks, annotations, and evidence-state rating badges.
 
 ## Resume File
 
-`.planning/phases/05-knowledge-browser-search-graph-and-ratings/05-UI-SPEC.md`
+`.planning/phases/05-knowledge-browser-search-graph-and-ratings/05-01-PLAN.md`
 
 ---
 *State initialized: 2026-04-18*
