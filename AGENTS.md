@@ -27,14 +27,23 @@ Goal: establish the app skeleton, storage contracts, provider boundaries, and ow
 ## Important Constraints
 
 - Markdown is the canonical human-readable knowledge store.
+- MongoDB is the structured metadata and graph relationship store.
 - Qdrant is the vector database target.
-- Neo4j is the initial graph database target unless phase research finds a blocker.
 - OpenAI APIs are allowed for v1, but durable knowledge must remain outside OpenAI-hosted memory.
 - v1 input is public TikTok links only.
 - v1 ground truth is papers and preprints only.
 - Fact-check labels are supported, contradicted, mixed, or insufficient evidence.
 - Every label, rating, and report must be traceable to underlying evidence.
 - TikTok ingestion must stay behind a compliance-gated adapter.
+
+## Phase 1 Contract Files
+
+- `docs/phase-1-contracts.md`
+- `vault/SCHEMA.md`
+- `backend/app/schemas/entities.py`
+- `backend/app/schemas/relationships.py`
+- `backend/app/schemas/vector_payloads.py`
+- `backend/app/contracts/store_sync.py`
 
 ## Next Step
 
