@@ -1,0 +1,29 @@
+[project]
+name = "fact-checker-backend"
+version = "0.1.0"
+description = "FastAPI backend contracts for the Fact Checker knowledge store."
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi",
+  "uvicorn",
+  "pydantic",
+  "pydantic-settings",
+  "pymongo",
+  "qdrant-client",
+  "python-frontmatter",
+  "pyyaml",
+]
+
+[dependency-groups]
+dev = [
+  "pytest",
+  "ruff",
+  "httpx",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
