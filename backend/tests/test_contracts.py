@@ -8,7 +8,9 @@ from app.contracts.logging import (
 from app.contracts.store_sync import QDRANT_REQUIRED_PAYLOAD_KEYS, build_trace_keys
 from app.contracts.vault import (
     REQUIRED_FRONTMATTER_KEYS,
+    VAULT_RAW_ARTIFACT_FOLDERS,
     VAULT_WIKI_ENTITY_FOLDERS,
+    expected_raw_artifact_path,
     expected_wiki_path,
 )
 
@@ -17,6 +19,8 @@ def test_vault_folders_match_contract():
     assert VAULT_WIKI_ENTITY_FOLDERS == (
         "videos",
         "creators",
+        "transcripts",
+        "screenshots",
         "claims",
         "papers",
         "authors",
@@ -25,6 +29,8 @@ def test_vault_folders_match_contract():
         "reports",
         "topics",
     )
+
+    assert VAULT_RAW_ARTIFACT_FOLDERS == ("videos", "transcripts", "screenshots")
 
 
 def test_required_frontmatter_includes_uuid():
@@ -44,6 +50,13 @@ def test_expected_wiki_path():
     assert (
         expected_wiki_path("claims", "transformer-attention-scaling")
         == "vault/wiki/claims/transformer-attention-scaling.md"
+    )
+
+
+def test_raw_artifact_path_for_screenshot():
+    assert (
+        expected_raw_artifact_path("screenshots", "attention-slide-001", ".png")
+        == "vault/raw/screenshots/attention-slide-001.png"
     )
 
 

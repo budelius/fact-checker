@@ -33,6 +33,8 @@ Required wiki folders:
 
 - `vault/wiki/videos/`
 - `vault/wiki/creators/`
+- `vault/wiki/transcripts/`
+- `vault/wiki/screenshots/`
 - `vault/wiki/claims/`
 - `vault/wiki/papers/`
 - `vault/wiki/authors/`
@@ -40,6 +42,14 @@ Required wiki folders:
 - `vault/wiki/evidence/`
 - `vault/wiki/reports/`
 - `vault/wiki/topics/`
+
+Required raw artifact folders:
+
+- `vault/raw/videos/`
+- `vault/raw/transcripts/`
+- `vault/raw/screenshots/`
+
+Transcript and screenshot wiki notes use singular frontmatter values `entity_type: transcript` and `entity_type: screenshot` while their folders remain plural.
 
 ## Frontmatter
 

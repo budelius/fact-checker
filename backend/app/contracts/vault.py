@@ -1,6 +1,8 @@
 VAULT_WIKI_ENTITY_FOLDERS = (
     "videos",
     "creators",
+    "transcripts",
+    "screenshots",
     "claims",
     "papers",
     "authors",
@@ -9,6 +11,8 @@ VAULT_WIKI_ENTITY_FOLDERS = (
     "reports",
     "topics",
 )
+
+VAULT_RAW_ARTIFACT_FOLDERS = ("videos", "transcripts", "screenshots")
 
 REQUIRED_FRONTMATTER_KEYS = (
     "uuid",
@@ -23,3 +27,8 @@ REQUIRED_FRONTMATTER_KEYS = (
 
 def expected_wiki_path(entity_type: str, slug: str) -> str:
     return f"vault/wiki/{entity_type}/{slug}.md"
+
+
+def expected_raw_artifact_path(kind: str, slug: str, extension: str) -> str:
+    normalized_extension = extension.lstrip(".")
+    return f"vault/raw/{kind}/{slug}.{normalized_extension}"
