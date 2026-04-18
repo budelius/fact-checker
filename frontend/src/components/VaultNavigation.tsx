@@ -19,7 +19,7 @@ export function VaultNavigation({
 
         return (
           <button
-            aria-label={`${section.name} section`}
+            aria-label={`${section.name} section${section.name === "Ratings" ? " for Ratings" : ""}`}
             aria-pressed={isActive}
             className={`vault-nav__item${isActive ? " vault-nav__item--active" : ""}`}
             key={section.name}
