@@ -20,7 +20,7 @@ Before planning or implementing a phase, read the project context, requirements,
 
 ## Current Focus
 
-Phase 4: Evidence Evaluation and Fact-Check Reports is planned and ready to execute.
+Phase 4: Evidence Evaluation and Fact-Check Reports is implemented and in final verification.
 
 Goal: compare each extracted video claim against selected Phase 3 paper evidence and produce cited, uncertainty-aware fact-check reports without unsupported labels.
 
@@ -66,12 +66,30 @@ Goal: compare each extracted video claim against selected Phase 3 paper evidence
 - `backend/app/ground_truth/persistence.py`
 - `backend/app/ground_truth/indexing.py`
 
+## Phase 4 Contract Files
+
+- `docs/phase-4-evaluation.md`
+- `.planning/phases/04-evidence-evaluation-and-fact-check-reports/04-CONTEXT.md`
+- `.planning/phases/04-evidence-evaluation-and-fact-check-reports/04-UI-SPEC.md`
+- `.planning/phases/04-evidence-evaluation-and-fact-check-reports/04-RESEARCH.md`
+- `backend/app/schemas/evaluation.py`
+- `backend/app/api/reports.py`
+- `backend/app/evaluation/evidence.py`
+- `backend/app/evaluation/evaluator.py`
+- `backend/app/evaluation/validation.py`
+- `backend/app/evaluation/markdown.py`
+- `backend/app/evaluation/persistence.py`
+- `backend/app/evaluation/pipeline.py`
+- `vault/templates/report.md`
+- `frontend/src/api/reports.ts`
+- `frontend/src/components/reports/`
+
 ## Next Step
 
 Run:
 
-`$gsd-execute-phase 4`
+`$gsd-plan-phase 5`
 
 For a planning review before execution, run:
 
-`$gsd-review --phase 4 --all`
+`$gsd-review --phase 5 --all`
