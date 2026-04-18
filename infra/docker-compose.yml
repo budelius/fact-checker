@@ -1,4 +1,47 @@
 services:
+  backend:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    depends_on:
+      - mongodb
+      - qdrant
+    ports:
+      - "8000:8000"
+    environment:
+      MONGODB_URI: mongodb://${MONGODB_ROOT_USERNAME:-factchecker}:${MONGODB_ROOT_PASSWORD:-factchecker-dev-password}@mongodb:27017/${MONGODB_DATABASE:-fact_checker}?authSource=admin
+      MONGODB_DATABASE: ${MONGODB_DATABASE:-fact_checker}
+      QDRANT_URL: http://qdrant:6333
+      QDRANT_COLLECTION_KNOWLEDGE: ${QDRANT_COLLECTION_KNOWLEDGE:-fact_checker_knowledge}
+      VAULT_ROOT: /workspace/vault
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      TIKTOK_MEDIA_DOWNLOAD_ENABLED: ${TIKTOK_MEDIA_DOWNLOAD_ENABLED:-false}
+      TIKTOK_MAX_VIDEO_MB: ${TIKTOK_MAX_VIDEO_MB:-200}
+      TRANSCRIPTION_PROVIDER: ${TRANSCRIPTION_PROVIDER:-disabled}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_DISCOVERY_MODEL: ${OPENAI_DISCOVERY_MODEL:-gpt-5.4-mini}
+      OPENAI_SUMMARY_MODEL: ${OPENAI_SUMMARY_MODEL:-gpt-5.4-mini}
+      OPENAI_EMBEDDING_MODEL: ${OPENAI_EMBEDDING_MODEL:-text-embedding-3-small}
+      OPENALEX_EMAIL: ${OPENALEX_EMAIL:-}
+      SEMANTIC_SCHOLAR_API_KEY: ${SEMANTIC_SCHOLAR_API_KEY:-}
+      GROUND_TRUTH_MAX_RESULTS_PER_PROVIDER: ${GROUND_TRUTH_MAX_RESULTS_PER_PROVIDER:-10}
+      PAPER_DOWNLOAD_ENABLED: ${PAPER_DOWNLOAD_ENABLED:-true}
+      PAPER_MAX_PDF_MB: ${PAPER_MAX_PDF_MB:-40}
+      PAPER_REQUEST_TIMEOUT_SECONDS: ${PAPER_REQUEST_TIMEOUT_SECONDS:-20}
+    volumes:
+      - ../vault:/workspace/vault
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: frontend/Dockerfile
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_BASE_URL: http://127.0.0.1:8000
+
   mongodb:
     image: mongodb/mongodb-community-server:latest
     expose:

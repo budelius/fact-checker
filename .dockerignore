@@ -1,0 +1,17 @@
+.git
+.env
+.DS_Store
+.pytest_cache
+__pycache__
+*.pyc
+
+backend/.venv
+frontend/node_modules
+frontend/dist
+
+vault/raw/videos/*
+vault/raw/screenshots/*
+vault/raw/papers/*
+
+hook_outputs
+.planning

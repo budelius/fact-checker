@@ -1,0 +1,163 @@
+{
+  "phase": "4",
+  "phase_name": "Evidence Evaluation and Fact-Check Reports",
+  "timestamp": "2026-04-18T00:00:00+02:00",
+  "areas_completed": [
+    "Label Policy And Strictness",
+    "Evidence Selection And Citations",
+    "Report Shape And UI Page"
+  ],
+  "areas_remaining": [
+    "Reruns, Versions, And Traceability"
+  ],
+  "decisions": {
+    "Label Policy And Strictness": [
+      {
+        "question": "How strict should supported be?",
+        "answer": "Reasonable support: the paper supports the claim's main idea, even if wording is broader than the paper.",
+        "options_presented": [
+          "Direct support only",
+          "Reasonable support",
+          "Generous support"
+        ]
+      },
+      {
+        "question": "How should exaggerated TikTok claims be handled?",
+        "answer": "Penalize overclaiming: if the paper supports a narrow version but the creator overstates it, use mixed or contradicted.",
+        "options_presented": [
+          "Penalize overclaiming",
+          "Normalize the claim",
+          "Show both literal and charitable versions"
+        ]
+      },
+      {
+        "question": "Should the evaluator break claims into subclaims?",
+        "answer": "Yes, decompose into subclaims and let the weakest unsupported part influence the final label.",
+        "options_presented": [
+          "Yes, decompose",
+          "Only for long or compound claims",
+          "No, evaluate each extracted claim as one unit"
+        ]
+      },
+      {
+        "question": "What makes a claim insufficient?",
+        "answer": "No selected paper addresses the claim directly, even if related papers exist.",
+        "options_presented": [
+          "No selected paper addresses the claim directly",
+          "Evidence exists but is weak or ambiguous",
+          "Either not found or found but weak"
+        ]
+      },
+      {
+        "question": "Should generated paper summaries be trusted during evaluation?",
+        "answer": "Do not trust prior paper summaries as verdict evidence because paper summaries can be misleading. Evaluation should use cited paper chunks/source text directly and may create its own evaluation-specific notes only when grounded in cited chunks.",
+        "options_presented": [
+          "User-provided freeform decision"
+        ]
+      }
+    ],
+    "Evidence Selection And Citations": [
+      {
+        "question": "What can count as verdict evidence?",
+        "answer": "Only raw paper chunks or directly extracted paper text count as default scientific verdict evidence. Rare exception: if the creator is specifically talking about a news article, use the news article as a non-scientific source exception and mark it clearly as such.",
+        "options_presented": [
+          "Only paper chunks / direct extracted paper text",
+          "Paper chunks plus abstract",
+          "Paper chunks, abstract, and evaluator-created chunk-grounded notes"
+        ]
+      },
+      {
+        "question": "How should paper summaries be used?",
+        "answer": "Navigation only: paper summaries may help find likely sections, but should never be cited as verdict evidence.",
+        "options_presented": [
+          "Navigation only",
+          "Secondary context",
+          "Not used at all during evaluation"
+        ]
+      },
+      {
+        "question": "How many citations should each non-insufficient claim need?",
+        "answer": "Prefer 2 or more cited chunks when available, but allow one strong chunk.",
+        "options_presented": [
+          "At least one cited chunk",
+          "Prefer 2+ chunks when available, but allow one strong chunk",
+          "Require multiple chunks for every non-insufficient label"
+        ]
+      },
+      {
+        "question": "Should screenshots/transcript context influence the verdict?",
+        "answer": "Screenshots and transcript context are used only to interpret what the creator claimed, not to prove the scientific answer.",
+        "options_presented": [
+          "Only to interpret what the creator claimed",
+          "It can influence confidence when paper evidence is ambiguous",
+          "It should be displayed only, not used by the evaluator"
+        ]
+      }
+    ],
+    "Report Shape And UI Page": [
+      {
+        "question": "What should be the report's first screen?",
+        "answer": "Narrative report first: readable executive summary, then claim details.",
+        "options_presented": [
+          "Claim-by-claim table",
+          "Narrative report first",
+          "Evidence-first view"
+        ]
+      },
+      {
+        "question": "How much reasoning should each claim show by default?",
+        "answer": "Compact by default: verdict, 1-2 sentence rationale, and citations.",
+        "options_presented": [
+          "Compact",
+          "Expanded",
+          "Collapsed by default"
+        ]
+      },
+      {
+        "question": "What should the Markdown report optimize for?",
+        "answer": "Both: human-readable report plus structured frontmatter/provenance appendix.",
+        "options_presented": [
+          "Human-readable Obsidian note",
+          "Machine audit log",
+          "Both"
+        ]
+      },
+      {
+        "question": "How should uncertainty be displayed in the UI?",
+        "answer": "Only show uncertainty when the label is mixed or insufficient.",
+        "options_presented": [
+          "Explicit uncertainty note on every claim",
+          "Only show uncertainty for mixed or insufficient",
+          "Visible badges plus text for uncertainty, source limits, and preprint/news status"
+        ]
+      }
+    ]
+  },
+  "deferred_ideas": [],
+  "canonical_refs": [
+    ".planning/PROJECT.md",
+    ".planning/REQUIREMENTS.md",
+    ".planning/ROADMAP.md",
+    ".planning/STATE.md",
+    ".planning/phases/01-foundation-and-knowledge-store-contracts/01-CONTEXT.md",
+    ".planning/phases/02-tiktok-ingestion-and-claim-extraction/02-CONTEXT.md",
+    ".planning/phases/03-ground-truth-discovery-and-paper-processing/03-CONTEXT.md",
+    "docs/phase-1-contracts.md",
+    "docs/phase-2-ingestion.md",
+    "docs/phase-3-ground-truth.md",
+    "vault/SCHEMA.md",
+    "vault/templates/report.md",
+    "backend/app/schemas/claims.py",
+    "backend/app/schemas/ground_truth.py",
+    "backend/app/schemas/entities.py",
+    "backend/app/schemas/relationships.py",
+    "backend/app/schemas/vector_payloads.py",
+    "backend/app/api/ground_truth.py",
+    "backend/app/ground_truth/pipeline.py",
+    "frontend/src/components/IngestionWorkbench.tsx",
+    "frontend/src/api/ingestion.ts",
+    "frontend/src/components/AppShell.tsx",
+    "frontend/src/styles/app.css",
+    "frontend/src/styles/tokens.css"
+  ]
+}

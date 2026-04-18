@@ -23,9 +23,12 @@ Phase 4 evidence labels and final fact-check reports are not complete yet. Phase
 
 ## Prerequisites
 
-Install these on the host machine:
+For the Docker Compose path, install:
 
 - Docker and Docker Compose
+
+For host-based development, also install:
+
 - Python 3.12
 - `uv`
 - Node.js and Yarn
@@ -60,7 +63,7 @@ OPENAI_API_KEY=sk-proj-your-key-here
 OPENAI_DISCOVERY_MODEL=gpt-5.4-mini
 OPENAI_SUMMARY_MODEL=gpt-5.4-mini
 OPENAI_EMBEDDING_MODEL=text-embedding-3-small
-# OPENAI_EMBEDDING_DIMENSIONS=
+# OPENAI_EMBEDDING_DIMENSIONS can be added only when you intentionally need it.
 ```
 
 Optional paper-index settings:
@@ -84,21 +87,33 @@ TRANSCRIPTION_PROVIDER=disabled
 
 `TIKTOK_MEDIA_DOWNLOAD_ENABLED=false` keeps live video download disabled. Captions and public metadata can still work through `yt-dlp`. Set it to `true` only when you want the backend to download public video bytes and extract a real source-clue frame with ffmpeg.
 
-## Datastores
+## Run With Docker Compose
 
-Start MongoDB and Qdrant:
+Docker Compose can run the application stack plus datastores. You only need Docker installed and a local `.env` for secrets such as `OPENAI_API_KEY`.
 
 ```bash
 cd infra
-docker compose --env-file ../.env up -d
+docker compose --env-file ../.env up -d --build
 docker compose ps
 ```
 
-MongoDB is intentionally not published to the Mac host by the default compose file, so it does not conflict with a local MongoDB on `27017`. Qdrant is published on `6333` and `6334`.
+Open the frontend:
 
-If you run the backend on the host and need MongoDB-backed Phase 3 persistence, `MONGODB_URI` must point to a MongoDB instance reachable from the host. If you use your local Mac MongoDB, set `MONGODB_URI` accordingly in `.env`. If you want the backend to use the Compose MongoDB, run the backend in the Docker network or explicitly publish MongoDB on a non-conflicting host port.
+```text
+http://127.0.0.1:5173/
+```
 
-Stop datastores:
+The backend is exposed at:
+
+```text
+http://127.0.0.1:8000/
+```
+
+MongoDB is intentionally not published to the Mac host by the default compose file, so it does not conflict with a local MongoDB on `27017`. The backend connects to MongoDB over the Compose network using the `mongodb` service name. Qdrant is published on `6333` and `6334`.
+
+The backend Docker image installs `ffmpeg` and `yt-dlp`, so TikTok caption retrieval and gated frame extraction work inside the container. `TIKTOK_MEDIA_DOWNLOAD_ENABLED=false` still remains the default.
+
+Stop the stack:
 
 ```bash
 cd infra
@@ -114,7 +129,21 @@ docker compose down -v
 
 This deletes local MongoDB and Qdrant data.
 
-## Install Dependencies
+## Run Host Development
+
+Use this path when editing code directly on the host.
+
+If you run the backend on the host and need MongoDB-backed Phase 3 persistence, `MONGODB_URI` must point to a MongoDB instance reachable from the host. If you use your local Mac MongoDB, set `MONGODB_URI` accordingly in `.env`. If you want the backend to use the Compose MongoDB, run the backend in the Docker network or explicitly publish MongoDB on a non-conflicting host port.
+
+Start only the datastores:
+
+```bash
+cd infra
+docker compose --env-file ../.env up -d mongodb qdrant
+docker compose ps
+```
+
+Install dependencies:
 
 Backend:
 
@@ -129,8 +158,6 @@ Frontend:
 cd frontend
 yarn install
 ```
-
-## Run Locally
 
 Start the backend:
 
