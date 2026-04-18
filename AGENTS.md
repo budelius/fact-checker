@@ -20,7 +20,7 @@ Before planning or implementing a phase, read the project context, requirements,
 
 ## Current Focus
 
-Phase 5: Knowledge Browser, Search, Graph, and Ratings is next.
+Phase 5: Knowledge Browser, Search, Graph, and Ratings is implemented.
 
 Goal: make accumulated Markdown/vector/graph knowledge useful through browsing, search, graph inspection, consistency checks, and transparent ratings.
 
@@ -84,12 +84,45 @@ Goal: make accumulated Markdown/vector/graph knowledge useful through browsing, 
 - `frontend/src/api/reports.ts`
 - `frontend/src/components/reports/`
 
+## Phase 5 Contract Files
+
+- `docs/phase-5-knowledge-browser.md`
+- `.planning/phases/05-knowledge-browser-search-graph-and-ratings/05-CONTEXT.md`
+- `.planning/phases/05-knowledge-browser-search-graph-and-ratings/05-UI-SPEC.md`
+- `.planning/phases/05-knowledge-browser-search-graph-and-ratings/05-RESEARCH.md`
+- `backend/app/schemas/knowledge.py`
+- `backend/app/schemas/ratings.py`
+- `backend/app/api/knowledge.py`
+- `backend/app/api/knowledge_browse.py`
+- `backend/app/api/knowledge_search.py`
+- `backend/app/api/knowledge_graph.py`
+- `backend/app/api/knowledge_ratings.py`
+- `backend/app/knowledge/vault.py`
+- `backend/app/knowledge/annotations.py`
+- `backend/app/knowledge/search.py`
+- `backend/app/knowledge/graph.py`
+- `backend/app/knowledge/consistency.py`
+- `backend/app/knowledge/ratings.py`
+- `frontend/src/api/knowledge.ts`
+- `frontend/src/components/AppShell.tsx`
+- `frontend/src/components/CommandPalette.tsx`
+- `frontend/src/components/KnowledgeGraphPanel.tsx`
+- `frontend/src/components/ConsistencyPanel.tsx`
+- `frontend/src/components/RatingBadge.tsx`
+- `frontend/src/components/RatingBasisPanel.tsx`
+- `backend/tests/test_knowledge_vault.py`
+- `backend/tests/test_knowledge_api.py`
+- `backend/tests/test_knowledge_search.py`
+- `backend/tests/test_knowledge_graph.py`
+- `backend/tests/test_knowledge_consistency.py`
+- `backend/tests/test_knowledge_ratings.py`
+
 ## Next Step
 
 Run:
 
-`$gsd-discuss-phase 5`
+`$gsd-complete-milestone`
 
-For a planning review before execution, run:
+For a final user acceptance pass before archiving the milestone, run:
 
-`$gsd-review --phase 5 --all`
+`$gsd-verify-work`
