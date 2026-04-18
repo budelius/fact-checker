@@ -9,6 +9,8 @@ from app.schemas.relationships import KnowledgeRelationship
 class MongoRepository:
     entity_collection_name = "entities"
     relationship_collection_name = "relationships"
+    ingestion_job_collection_name = "ingestion_jobs"
+    pipeline_event_collection_name = "pipeline_events"
 
     def __init__(self, client: MongoClient, database_name: str) -> None:
         self.database = client[database_name]
@@ -20,6 +22,14 @@ class MongoRepository:
     @property
     def relationships(self):
         return self.database[self.relationship_collection_name]
+
+    @property
+    def ingestion_jobs(self):
+        return self.database[self.ingestion_job_collection_name]
+
+    @property
+    def pipeline_events(self):
+        return self.database[self.pipeline_event_collection_name]
 
     def upsert_entity(self, entity: KnowledgeEntity) -> None:
         document = entity.model_dump(mode="json")

@@ -8,6 +8,7 @@ dependencies = [
   "uvicorn",
   "pydantic",
   "pydantic-settings",
+  "python-multipart",
   "pymongo",
   "qdrant-client",
   "python-frontmatter",
