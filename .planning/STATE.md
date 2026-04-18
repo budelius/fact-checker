@@ -24,6 +24,9 @@ See: .planning/PROJECT.md (updated 2026-04-18)
 - Phase 2 plan count: 6 plans in 4 waves
 - Phase 2 completed: 2026-04-18
 - Phase 3 context gathered: 2026-04-18
+- Phase 3 researched: 2026-04-18
+- Phase 3 planned: 2026-04-18
+- Phase 3 plan count: 6 plans in 4 waves
 
 ## Active Roadmap
 
@@ -31,23 +34,23 @@ See: .planning/PROJECT.md (updated 2026-04-18)
 |-------|--------|----------|
 | 1 - Foundation and Knowledge Store Contracts | Complete | Verified |
 | 2 - TikTok Ingestion and Claim Extraction | Complete | Verified |
-| 3 - Ground-Truth Discovery and Paper Processing | Pending | Ready to plan |
+| 3 - Ground-Truth Discovery and Paper Processing | Planned | Ready to execute |
 | 4 - Evidence Evaluation and Fact-Check Reports | Pending | 0% |
 | 5 - Knowledge Browser, Search, Graph, and Ratings | Pending | 0% |
 
 ## Next Command
 
-`$gsd-plan-phase 3`
+`$gsd-execute-phase 3`
 
 Alternative:
 
-`$gsd-plan-phase 3 --skip-research`
+`$gsd-review --phase 3 --all`
 
-Plan Phase 3. Phase 2 delivered URL submission, user-owned video upload, pasted transcript fixtures, progress visibility, pending claims, and source-candidate triage. Phase 3 context locks creative staged discovery, papers/preprints-only ground truth, full paper processing, and full trace logging.
+Execute Phase 3. Phase 2 delivered URL submission, user-owned video upload, pasted transcript fixtures, progress visibility, pending claims, and source-candidate triage. Phase 3 plans implement creative staged discovery, papers/preprints-only ground truth, full paper processing, and full trace logging.
 
 ## Resume File
 
-`.planning/phases/03-ground-truth-discovery-and-paper-processing/03-CONTEXT.md`
+`.planning/phases/03-ground-truth-discovery-and-paper-processing/03-01-PLAN.md`
 
 ---
 *State initialized: 2026-04-18*
