@@ -32,6 +32,10 @@ class Settings(BaseSettings):
         default="gpt-5.4-mini",
         alias="OPENAI_SUMMARY_MODEL",
     )
+    openai_evaluation_model: str = Field(
+        default="gpt-5.4-mini",
+        alias="OPENAI_EVALUATION_MODEL",
+    )
     openai_embedding_model: str = Field(
         default="text-embedding-3-small",
         alias="OPENAI_EMBEDDING_MODEL",
@@ -54,6 +58,14 @@ class Settings(BaseSettings):
     paper_request_timeout_seconds: float = Field(
         default=20.0,
         alias="PAPER_REQUEST_TIMEOUT_SECONDS",
+    )
+    evaluation_max_chunks_per_claim: int = Field(
+        default=8,
+        alias="EVALUATION_MAX_CHUNKS_PER_CLAIM",
+    )
+    evaluation_excerpt_max_chars: int = Field(
+        default=1200,
+        alias="EVALUATION_EXCERPT_MAX_CHARS",
     )
 
 

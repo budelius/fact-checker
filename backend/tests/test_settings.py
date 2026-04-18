@@ -33,6 +33,7 @@ def test_ground_truth_settings_defaults(monkeypatch):
 
     assert settings.openai_discovery_model == "gpt-5.4-mini"
     assert settings.openai_summary_model == "gpt-5.4-mini"
+    assert settings.openai_evaluation_model == "gpt-5.4-mini"
     assert settings.openai_embedding_model == "text-embedding-3-small"
     assert settings.openai_embedding_dimensions is None
     assert settings.openalex_email is None
@@ -41,12 +42,17 @@ def test_ground_truth_settings_defaults(monkeypatch):
     assert settings.paper_download_enabled is True
     assert settings.paper_max_pdf_mb == 40
     assert settings.paper_request_timeout_seconds == 20.0
+    assert settings.evaluation_max_chunks_per_claim == 8
+    assert settings.evaluation_excerpt_max_chars == 1200
 
 
 def test_ground_truth_settings_from_env(monkeypatch):
     set_required_settings(monkeypatch)
     monkeypatch.setenv("OPENAI_DISCOVERY_MODEL", "gpt-test")
+    monkeypatch.setenv("OPENAI_EVALUATION_MODEL", "gpt-eval")
     monkeypatch.setenv("OPENAI_EMBEDDING_MODEL", "embedding-test")
+    monkeypatch.setenv("EVALUATION_MAX_CHUNKS_PER_CLAIM", "3")
+    monkeypatch.setenv("EVALUATION_EXCERPT_MAX_CHARS", "700")
     monkeypatch.setenv("OPENALEX_EMAIL", "research@example.com")
     monkeypatch.setenv("SEMANTIC_SCHOLAR_API_KEY", "s2-key")
     monkeypatch.setenv("PAPER_DOWNLOAD_ENABLED", "false")
@@ -54,7 +60,10 @@ def test_ground_truth_settings_from_env(monkeypatch):
     settings = Settings()
 
     assert settings.openai_discovery_model == "gpt-test"
+    assert settings.openai_evaluation_model == "gpt-eval"
     assert settings.openai_embedding_model == "embedding-test"
+    assert settings.evaluation_max_chunks_per_claim == 3
+    assert settings.evaluation_excerpt_max_chars == 700
     assert settings.openalex_email == "research@example.com"
     assert settings.semantic_scholar_api_key == "s2-key"
     assert settings.paper_download_enabled is False
