@@ -27,7 +27,7 @@ Primary areas:
 
 ## Findings
 
-No open critical, warning, or info findings remain after review.
+No open critical, warning, or info findings remain after review and verifier follow-up.
 
 ## Review-Time Fixes
 
@@ -37,10 +37,17 @@ No open critical, warning, or info findings remain after review.
 
 Commit: `ea26074 fix(01-02): support root env files`
 
+### Fixed: Qdrant payload and logging contract gaps
+
+The read-only verifier sidecar found that Qdrant point IDs were entity UUID-only, Qdrant payloads lacked filterable source/date/relationship fields, `build_trace_keys()` omitted `chunk_id`, and OPS-03 lacked a concrete pipeline logging contract. The implementation now uses deterministic per-chunk UUIDv5 point IDs, includes `source`, `source_date`, and `relationship_uuids` payload fields, expands trace keys, and adds `backend/app/contracts/logging.py`.
+
+Commit: `9fe5821 fix(01): tighten qdrant and logging contracts`
+
 ## Verification
 
 - `python3 -m compileall -q backend/app backend/tests`
 - Plan-level grep checks for all five plans
+- Verifier follow-up checks for `uuid5(payload.uuid, payload.chunk_id)`, Qdrant filter payload keys, and pipeline logging contract keys
 - `git diff --check` for edited source and documentation files
 
 ## Residual Risk

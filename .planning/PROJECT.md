@@ -4,7 +4,7 @@
 
 Fact Checker is a user-owned fact-checking system for AI research claims in public TikTok videos. A user pastes a video link into a website, the backend extracts the transcript and video context, finds relevant papers or preprints, and produces an evidence-backed report plus a growing Markdown knowledge base.
 
-The product is not just a one-off checker. It builds an owned research memory over time: Markdown notes, vector search, and a graph database connect videos, creators, claims, papers, authors, sources, and evidence so future checks become faster and more accurate.
+The product is not just a one-off checker. It builds an owned research memory over time: Markdown notes, vector search, and MongoDB-backed graph relationships connect videos, creators, claims, papers, authors, sources, and evidence so future checks become faster and more accurate.
 
 ## Core Value
 
@@ -14,7 +14,7 @@ Save time verifying AI research claims while keeping the accumulated evidence an
 
 ### Validated
 
-(None yet - ship to validate)
+- [x] Phase 1 foundation contracts: monorepo structure, MongoDB/Qdrant local datastore contracts, UUID schemas, Markdown vault schema/templates, static knowledge-browser shell, and safety boundaries.
 
 ### Active
 
@@ -26,7 +26,7 @@ Save time verifying AI research claims while keeping the accumulated evidence an
 - [ ] System can compare extracted claims against evidence and label each claim as supported, contradicted, mixed, or insufficient evidence.
 - [ ] System can create a Markdown knowledge base with notes for videos, creators, claims, papers, authors, sources, and fact-check reports.
 - [ ] System can index the knowledge base and source chunks in Qdrant for vector search.
-- [ ] System can store entities and relationships in a graph database for source, author, paper, creator, claim, and evidence relationships.
+- [ ] System can store entities and relationships in MongoDB for source, author, paper, creator, claim, and evidence relationships.
 - [ ] System can expose an Obsidian-like web UI for browsing Markdown notes, search results, graph relationships, and fact-check reports.
 - [ ] System can generate transparent initial ratings for creators, papers, authors, and sources based on accumulated evidence history.
 
@@ -50,7 +50,7 @@ The narrow first use case is AI research fact checking for public TikTok videos.
 5. Backend searches the live web and paper indexes for relevant papers or preprints.
 6. Backend downloads or links papers, indexes them, and summarizes them as Markdown.
 7. Backend compares claims against evidence and produces claim-level labels.
-8. Backend writes Markdown notes and structured records into vector and graph storage.
+8. Backend writes Markdown notes, MongoDB structured records/relationships, and vector index records.
 9. User browses the report, Markdown knowledge base, search, and graph relationships in the web UI.
 
 Why this needs to exist:
@@ -73,8 +73,8 @@ Known terms:
 - **Interface**: v1 uses a website with URL submission and an Obsidian-like Markdown browser - this validates the user workflow before chat clients or glasses.
 - **Judgment model**: v1 labels claims as supported, contradicted, mixed, or insufficient evidence - binary truth is too brittle for research claims.
 - **Storage ownership**: Markdown files are the canonical human-readable knowledge store - users and companies must be able to keep, inspect, and move their knowledge.
+- **Structured storage**: MongoDB is the structured metadata and graph relationship store - it replaces separate Postgres and Neo4j services for v1 operational records, entity documents, rating snapshots, and relationship edges.
 - **Vector storage**: Qdrant is the first vector store target - it supports dense, sparse, filtered, and hybrid retrieval patterns suitable for paper and note search.
-- **Graph storage**: Neo4j is the initial graph database target unless phase research finds a blocker - it has mature graph querying, tooling, and graph-data-science options.
 - **LLM dependency**: OpenAI APIs are allowed for v1 search, extraction, transcription, and reasoning, but durable data must remain outside OpenAI-hosted memory.
 - **Compliance**: TikTok ingestion must be isolated behind an adapter and checked against platform terms before implementation - video downloading can be brittle and policy-sensitive.
 - **Transparency**: Every report and rating must cite the underlying claims and evidence - hidden scores undermine trust.
@@ -88,9 +88,9 @@ Known terms:
 | v1 uses evidence labels | Supported, contradicted, mixed, and insufficient evidence expose uncertainty better than a binary true/false verdict. | - Pending |
 | v1 UI is website plus Markdown browser | URL submission plus knowledge browsing validates the main workflow and the owned-memory value proposition. | - Pending |
 | v1 input is public TikTok links | TikTok is the narrow creator-platform target; Instagram is deferred. | - Pending |
-| Markdown is the canonical knowledge surface | Markdown keeps the corpus portable, inspectable, and compatible with Obsidian-like workflows. | - Pending |
-| Qdrant is the vector database target | Qdrant fits filtered and hybrid retrieval for source chunks, claims, and notes. | - Pending |
-| Neo4j is the initial graph database target | Neo4j is a mature graph database with Cypher, visualization, and graph-data-science support. | - Pending |
+| Markdown is the canonical knowledge surface | Markdown keeps the corpus portable, inspectable, and compatible with Obsidian-like workflows. | Validated in Phase 1 |
+| MongoDB replaces Postgres and Neo4j | One document database keeps operational records, entity metadata, rating snapshots, and graph relationships together for the MVP, reducing local infrastructure and schema coordination. | Validated in Phase 1 |
+| Qdrant is the vector database target | Qdrant fits filtered and hybrid retrieval for source chunks, claims, and notes. | Validated in Phase 1 |
 
 ## Evolution
 
@@ -110,4 +110,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-18 after initialization*
+*Last updated: 2026-04-18 after Phase 1 verification*

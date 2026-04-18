@@ -47,12 +47,12 @@ Requirements for the first release. Each maps to roadmap phases.
 
 ### Knowledge Base
 
-- [ ] **KB-01**: System can create Obsidian-compatible Markdown notes for videos, creators, claims, papers, authors, sources, and reports.
-- [ ] **KB-02**: Markdown notes use stable IDs and backlinks between related entities.
-- [ ] **KB-03**: System can keep Markdown files as the canonical human-readable knowledge store.
-- [ ] **KB-04**: System can index Markdown notes and source chunks in Qdrant with filters for entity type, source, date, and relationships.
-- [ ] **KB-05**: System can write graph entities and relationships to Neo4j for creators, claims, papers, authors, sources, evidence, and topics.
-- [ ] **KB-06**: System can run a consistency check between Markdown, Postgres metadata, Qdrant, and Neo4j.
+- [x] **KB-01**: System can create Obsidian-compatible Markdown notes for videos, creators, claims, papers, authors, sources, and reports.
+- [x] **KB-02**: Markdown notes use stable IDs and backlinks between related entities.
+- [x] **KB-03**: System can keep Markdown files as the canonical human-readable knowledge store.
+- [x] **KB-04**: System can index Markdown notes and source chunks in Qdrant with filters for entity type, source, date, and relationships.
+- [x] **KB-05**: System can write graph entities and relationships to MongoDB for creators, claims, papers, authors, sources, evidence, and topics.
+- [ ] **KB-06**: System can run a consistency check between Markdown, MongoDB metadata and relationships, and Qdrant.
 
 ### User Interface
 
@@ -70,10 +70,10 @@ Requirements for the first release. Each maps to roadmap phases.
 
 ### Operations and Safety
 
-- [ ] **OPS-01**: System stores API keys and provider credentials outside Markdown, logs, and committed files.
-- [ ] **OPS-02**: System treats transcripts, paper text, and web content as untrusted input during LLM prompting.
-- [ ] **OPS-03**: System logs enough pipeline detail to debug failed ingestion, search, parsing, evaluation, indexing, and graph writes.
-- [ ] **OPS-04**: System can rerun a fact-check job without duplicating canonical entities or corrupting indexes.
+- [x] **OPS-01**: System stores API keys and provider credentials outside Markdown, logs, and committed files.
+- [x] **OPS-02**: System treats transcripts, paper text, and web content as untrusted input during LLM prompting.
+- [x] **OPS-03**: System logs enough pipeline detail to debug failed ingestion, search, parsing, evaluation, indexing, and graph writes.
+- [x] **OPS-04**: System can rerun a fact-check job without duplicating canonical entities or corrupting indexes.
 
 ## v2 Requirements
 
@@ -143,11 +143,11 @@ Explicitly excluded. Documented to prevent scope creep.
 | EVAL-03 | Phase 4 | Pending |
 | EVAL-04 | Phase 4 | Pending |
 | EVAL-05 | Phase 4 | Pending |
-| KB-01 | Phase 1 | Pending |
-| KB-02 | Phase 1 | Pending |
-| KB-03 | Phase 1 | Pending |
-| KB-04 | Phase 1 | Pending |
-| KB-05 | Phase 1 | Pending |
+| KB-01 | Phase 1 | Complete |
+| KB-02 | Phase 1 | Complete |
+| KB-03 | Phase 1 | Complete |
+| KB-04 | Phase 1 | Complete |
+| KB-05 | Phase 1 | Complete |
 | KB-06 | Phase 5 | Pending |
 | UI-01 | Phase 2 | Pending |
 | UI-02 | Phase 4 | Pending |
@@ -157,10 +157,10 @@ Explicitly excluded. Documented to prevent scope creep.
 | RAT-01 | Phase 5 | Pending |
 | RAT-02 | Phase 5 | Pending |
 | RAT-03 | Phase 5 | Pending |
-| OPS-01 | Phase 1 | Pending |
-| OPS-02 | Phase 1 | Pending |
-| OPS-03 | Phase 1 | Pending |
-| OPS-04 | Phase 1 | Pending |
+| OPS-01 | Phase 1 | Complete |
+| OPS-02 | Phase 1 | Complete |
+| OPS-03 | Phase 1 | Complete |
+| OPS-04 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 41 total
@@ -169,4 +169,4 @@ Explicitly excluded. Documented to prevent scope creep.
 
 ---
 *Requirements defined: 2026-04-18*
-*Last updated: 2026-04-18 after roadmap creation*
+*Last updated: 2026-04-18 after Phase 1 verification*

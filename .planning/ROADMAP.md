@@ -20,6 +20,8 @@
 
 ### Phase 1: Foundation and Knowledge Store Contracts
 
+**Status:** Complete (verified 2026-04-18)
+
 **Goal:** Establish the app skeleton, storage contracts, provider boundaries, and owned knowledge model that every later phase writes into.
 
 **Requirements:** KB-01, KB-02, KB-03, KB-04, KB-05, OPS-01, OPS-02, OPS-03, OPS-04
@@ -28,16 +30,16 @@
 
 **Success Criteria:**
 
-1. Local development can start the backend, frontend shell, Postgres, Qdrant, and Neo4j.
+1. Local development can start the backend, frontend shell, MongoDB, and Qdrant.
 2. The project has stable entity schemas for videos, creators, claims, papers, authors, sources, evidence, reports, and ratings.
 3. Markdown note templates exist for every canonical entity type and use stable IDs/backlinks.
-4. Qdrant and Neo4j adapter boundaries can write/read test entities without relying on later ingestion work.
+4. MongoDB and Qdrant adapter boundaries can write/read test entities without relying on later ingestion work.
 5. Secrets, prompt inputs, logs, and rerun/idempotency behavior are designed before handling external content.
 
 **Implementation Notes:**
 
 - Keep provider integrations behind adapters from the start.
-- Treat Markdown as canonical human-readable knowledge, with Qdrant and Neo4j as derived query layers.
+- Treat Markdown as canonical human-readable knowledge, with MongoDB as the structured metadata/relationship store and Qdrant as the vector query layer.
 - Include a minimal UI shell because the selected v1 interface is website plus Markdown browser.
 
 ### Phase 2: TikTok Ingestion and Claim Extraction
@@ -119,7 +121,7 @@
 1. User can browse Markdown notes for videos, creators, claims, papers, authors, sources, and reports in an Obsidian-like UI.
 2. User can search stored notes, papers, claims, and reports through Qdrant-backed search with useful filters.
 3. User can inspect graph relationships between creators, claims, papers, authors, sources, evidence, and topics.
-4. System can run a consistency check across Markdown, Postgres, Qdrant, and Neo4j and report drift.
+4. System can run a consistency check across Markdown, MongoDB, and Qdrant and report drift.
 5. Creator, paper, author, and source rating records show evidence count, label distribution, source basis, and confidence level.
 6. Early ratings are marked experimental until enough evidence history exists.
 
@@ -144,7 +146,7 @@
 - Each phase must verify user-facing behavior or stored artifacts, not just implementation tasks.
 - Each phase must include tests for idempotency and traceability where it writes durable knowledge.
 - Every generated report must be reproducible from stored claims, sources, and evidence records.
-- The final milestone is complete only when a TikTok URL can flow through ingestion, claim extraction, source discovery, paper processing, evidence evaluation, Markdown storage, vector indexing, graph storage, and UI browsing.
+- The final milestone is complete only when a TikTok URL can flow through ingestion, claim extraction, source discovery, paper processing, evidence evaluation, Markdown storage, MongoDB relationship storage, vector indexing, and UI browsing.
 
 ---
 *Roadmap created: 2026-04-18*

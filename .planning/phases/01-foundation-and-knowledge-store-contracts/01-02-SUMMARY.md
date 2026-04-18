@@ -36,7 +36,7 @@ key-decisions:
   - "External text is explicitly wrapped as untrusted before later LLM prompting."
 patterns-established:
   - "Backend settings read uppercase environment variables from the root env contract."
-  - "Qdrant payloads carry uuid, entity_type, vault_path, and chunk_id trace fields."
+  - "Qdrant payloads carry uuid, entity_type, vault_path, chunk_id, source, source_date, and relationship filter fields."
 requirements-completed: [KB-02, KB-04, KB-05, OPS-01, OPS-02, OPS-03, OPS-04]
 duration: 11 min
 completed: 2026-04-18
@@ -67,6 +67,7 @@ completed: 2026-04-18
 2. **Task 2: Define canonical entity and relationship schemas** - `2fb80c7`
 3. **Task 3: Add datastore repositories and untrusted-input guardrails** - `fe2f5a4`
 4. **Review fix: Support root or backend `.env` lookup** - `ea26074`
+5. **Verifier fix: Use per-chunk Qdrant point IDs and filter payload keys** - `9fe5821`
 
 ## Files Created/Modified
 
@@ -99,9 +100,17 @@ completed: 2026-04-18
 - **Verification:** `python3 -m compileall -q backend/app backend/tests`
 - **Committed in:** `ea26074`
 
+**2. [Rule 2 - Missing Critical] Qdrant payload/indexing contract was too narrow**
+- **Found during:** Read-only verifier sidecar
+- **Issue:** Qdrant payloads lacked filterable `source`, `source_date`, and relationship-list fields, and Qdrant point IDs were entity UUID-only, which could overwrite multiple chunks for one entity.
+- **Fix:** Added filter payload fields and changed Qdrant point IDs to deterministic UUIDv5 values derived from entity UUID plus chunk ID.
+- **Files modified:** `backend/app/schemas/vector_payloads.py`, `backend/app/repositories/qdrant.py`, `backend/app/contracts/store_sync.py`, `backend/tests/test_schemas.py`, `backend/tests/test_contracts.py`
+- **Verification:** `python3 -m compileall -q backend/app backend/tests`; grep checks for `source_date`, `relationship_uuids`, and `uuid5(payload.uuid, payload.chunk_id)`
+- **Committed in:** `9fe5821`
+
 ---
 
-**Total deviations:** 1 auto-fixed (missing critical). **Impact on plan:** Improves local developer reliability without changing public contracts.
+**Total deviations:** 2 auto-fixed (missing critical). **Impact on plan:** Strengthens KB-04 and OPS-04 without changing the Phase 1 scope.
 
 ## Issues Encountered
 
