@@ -13,6 +13,9 @@ dependencies = [
   "qdrant-client",
   "python-frontmatter",
   "pyyaml",
+  "httpx>=0.28.1",
+  "openai>=2.32.0",
+  "pypdf>=6.10.2",
 ]
 
 [dependency-groups]

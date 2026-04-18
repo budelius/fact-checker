@@ -24,6 +24,37 @@ class Settings(BaseSettings):
     tiktok_max_video_mb: int = Field(default=200, alias="TIKTOK_MAX_VIDEO_MB")
     transcription_provider: str = Field(default="disabled", alias="TRANSCRIPTION_PROVIDER")
     openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
+    openai_discovery_model: str = Field(
+        default="gpt-5.4-mini",
+        alias="OPENAI_DISCOVERY_MODEL",
+    )
+    openai_summary_model: str = Field(
+        default="gpt-5.4-mini",
+        alias="OPENAI_SUMMARY_MODEL",
+    )
+    openai_embedding_model: str = Field(
+        default="text-embedding-3-small",
+        alias="OPENAI_EMBEDDING_MODEL",
+    )
+    openai_embedding_dimensions: int | None = Field(
+        default=None,
+        alias="OPENAI_EMBEDDING_DIMENSIONS",
+    )
+    openalex_email: str | None = Field(default=None, alias="OPENALEX_EMAIL")
+    semantic_scholar_api_key: str | None = Field(
+        default=None,
+        alias="SEMANTIC_SCHOLAR_API_KEY",
+    )
+    ground_truth_max_results_per_provider: int = Field(
+        default=10,
+        alias="GROUND_TRUTH_MAX_RESULTS_PER_PROVIDER",
+    )
+    paper_download_enabled: bool = Field(default=True, alias="PAPER_DOWNLOAD_ENABLED")
+    paper_max_pdf_mb: int = Field(default=40, alias="PAPER_MAX_PDF_MB")
+    paper_request_timeout_seconds: float = Field(
+        default=20.0,
+        alias="PAPER_REQUEST_TIMEOUT_SECONDS",
+    )
 
 
 @lru_cache
