@@ -19,7 +19,9 @@ const sampleTranscript =
   "The source is arXiv:1706.03762.";
 
 export function IngestionWorkbench() {
-  const [url, setUrl] = useState("https://www.tiktok.com/@fixture/video/1234567890");
+  const [url, setUrl] = useState(
+    "https://www.tiktok.com/@stephenlee96/video/7626043894639250702?_r=1&_t=ZN-95VcdJG75OA",
+  );
   const [transcript, setTranscript] = useState(sampleTranscript);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [job, setJob] = useState<IngestionJob | null>(null);
@@ -59,6 +61,18 @@ export function IngestionWorkbench() {
     }
   }
 
+  async function readMetadata() {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      setJob(await submitTikTokUrl(url));
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "ingestion_request_failed");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <div className="ingestion-workspace">
       <TikTokSubmissionPanel
@@ -68,6 +82,7 @@ export function IngestionWorkbench() {
         onSubmitUrl={submitUrl}
         onTranscriptChange={setTranscript}
         onUrlChange={setUrl}
+        onReadMetadata={readMetadata}
         onUseSampleTranscript={() => setTranscript(sampleTranscript)}
         selectedFile={selectedFile}
         transcript={transcript}
@@ -90,8 +105,8 @@ export function IngestionWorkbench() {
         <section className="ingestion-panel">
           <h2>Job status</h2>
           <p className="empty-state">
-            Submit the sample transcript or upload a video to create a local Phase 2 job without
-            live TikTok or OpenAI access.
+            Read public metadata, submit the sample transcript, or upload a video to create a local
+            Phase 2 job.
           </p>
         </section>
       )}

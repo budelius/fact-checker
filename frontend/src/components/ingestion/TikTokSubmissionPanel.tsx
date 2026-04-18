@@ -12,6 +12,7 @@ type TikTokSubmissionPanelProps = {
   onSubmitUrl: (event: FormEvent<HTMLFormElement>) => void;
   onSubmitUpload: () => void;
   onUseSampleTranscript: () => void;
+  onReadMetadata: () => void;
 };
 
 export function TikTokSubmissionPanel({
@@ -25,6 +26,7 @@ export function TikTokSubmissionPanel({
   onSubmitUrl,
   onSubmitUpload,
   onUseSampleTranscript,
+  onReadMetadata,
 }: TikTokSubmissionPanelProps) {
   return (
     <section className="submission-panel" aria-label="TikTok ingestion submission">
@@ -52,6 +54,15 @@ export function TikTokSubmissionPanel({
           <button className="primary-action" disabled={isSubmitting} type="submit">
             <FileText aria-hidden="true" size={18} />
             Extract claims
+          </button>
+          <button
+            className="secondary-action"
+            disabled={isSubmitting}
+            onClick={onReadMetadata}
+            type="button"
+          >
+            <RefreshCw aria-hidden="true" size={18} />
+            Read metadata
           </button>
           <button
             className="secondary-action"

@@ -25,7 +25,17 @@ def _use_temp_vault(monkeypatch, tmp_path):
     get_settings.cache_clear()
 
 
-def test_submit_supported_tiktok_returns_job_uuid():
+def test_submit_supported_tiktok_returns_job_uuid(monkeypatch):
+    async def fake_fetch_public_metadata(_url):
+        return {
+            "id": "1234567890",
+            "title": "Attention paper explained",
+            "creator_alias": "fixture_creator",
+            "description": "arXiv:1706.03762",
+        }
+
+    monkeypatch.setattr("app.api.ingestion.fetch_public_metadata", fake_fetch_public_metadata)
+
     response = client.post(
         "/ingestion/tiktok",
         json={"url": "https://www.tiktok.com/@fixture/video/1234567890"},
@@ -35,7 +45,14 @@ def test_submit_supported_tiktok_returns_job_uuid():
     payload = response.json()
     assert UUID(payload["job_uuid"])
     assert payload["status"] == "pending"
-    assert payload["current_operation"] == "URL accepted. Add a pasted transcript to run locally."
+    assert payload["current_operation"] == (
+        "Public metadata retrieved. Add a pasted transcript to run local claim extraction."
+    )
+    assert payload["public_metadata"]["external_video_id"] == "1234567890"
+    metadata_artifact = next(
+        artifact for artifact in payload["artifacts"] if artifact["artifact_type"] == "public_metadata"
+    )
+    assert metadata_artifact["status"] == "succeeded"
 
 
 def test_submit_unsupported_tiktok_url_returns_400():

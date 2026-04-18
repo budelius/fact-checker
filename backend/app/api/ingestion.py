@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel
 
-from app.ingestion.adapters.tiktok import is_supported_tiktok_url
+from app.ingestion.adapters.tiktok import fetch_public_metadata, is_supported_tiktok_url
 from app.ingestion.claims import extract_fixture_claims
 from app.ingestion.jobs import create_ingestion_job, get_job, mark_job_succeeded, save_job, serialize_job
 from app.ingestion.keyframes import build_screenshot_artifact
@@ -202,19 +202,42 @@ def _complete_transcript_job(
     )
 
 
+def _metadata_details(source_url: str, metadata: dict[str, object]) -> dict[str, object]:
+    return {
+        "source_url": source_url,
+        "external_video_id": metadata.get("id"),
+        "creator_alias": metadata.get("creator_alias") or metadata.get("uploader"),
+        "title": metadata.get("title"),
+        "description": metadata.get("description"),
+    }
+
+
 @router.post("/tiktok")
-def submit_tiktok_url(request: TikTokSubmitRequest) -> dict:
+async def submit_tiktok_url(request: TikTokSubmitRequest) -> dict:
     if not is_supported_tiktok_url(request.url):
         raise HTTPException(status_code=400, detail="unsupported_tiktok_url")
 
     job = create_ingestion_job(request.url, SourceKind.tiktok_url)
     update_stage(job, IngestionStageName.validate_url, StageStatus.succeeded, "Public TikTok URL accepted.")
-    update_stage(
-        job,
-        IngestionStageName.read_public_metadata,
-        StageStatus.skipped,
-        "Live TikTok metadata retrieval is disabled in this local run.",
-    )
+    update_stage(job, IngestionStageName.read_public_metadata, StageStatus.running, "Reading public metadata.")
+    try:
+        metadata = await fetch_public_metadata(request.url)
+    except Exception as exc:
+        metadata = {}
+        update_stage(
+            job,
+            IngestionStageName.read_public_metadata,
+            StageStatus.failed,
+            f"Public metadata retrieval failed: {type(exc).__name__}",
+        )
+    else:
+        update_stage(
+            job,
+            IngestionStageName.read_public_metadata,
+            StageStatus.succeeded if metadata else StageStatus.failed,
+            "Public metadata retrieved." if metadata else "Public metadata unavailable.",
+        )
+
     update_stage(
         job,
         IngestionStageName.build_transcript,
@@ -222,16 +245,29 @@ def submit_tiktok_url(request: TikTokSubmitRequest) -> dict:
         "Use the pasted-transcript fallback to run local claim extraction.",
     )
     job.status = JobLifecycleStatus.pending
-    job.current_operation = "URL accepted. Add a pasted transcript to run locally."
+    job.current_operation = (
+        "Public metadata retrieved. Add a pasted transcript to run local claim extraction."
+        if metadata
+        else "URL accepted, but public metadata was unavailable. Add a pasted transcript to run locally."
+    )
+    metadata_details = _metadata_details(request.url, metadata)
     _add_artifact(
         job,
         ArtifactType.public_metadata,
-        StageStatus.skipped,
+        StageStatus.succeeded if metadata else StageStatus.failed,
         "Public metadata",
-        "Live TikTok metadata retrieval is disabled in this local run.",
-        {"source_url": request.url},
+        "Public metadata retrieved." if metadata else "Public metadata unavailable.",
+        metadata_details,
     )
-    return save_job(serialize_job(job, public_metadata={}, transcript_artifact=None, screenshots=[], claims=[]))
+    return save_job(
+        serialize_job(
+            job,
+            public_metadata=metadata_details,
+            transcript_artifact=None,
+            screenshots=[],
+            claims=[],
+        )
+    )
 
 
 @router.post("/fixtures/transcript")
